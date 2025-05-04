@@ -1,0 +1,31 @@
+{% extends 'custom_base.html' %}
+
+{% block title %}
+Edit Comment | Comic Bro'Z
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card shadow-lg">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Edit Comment</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <!-- Comment Content Field with manual class -->
+                <div class="form-group mb-3">
+                    <label for="content" class="form-label">Comment Content</label>
+                    <textarea name="content" id="content" class="form-control" rows="4">{{ form.content.value }}</textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

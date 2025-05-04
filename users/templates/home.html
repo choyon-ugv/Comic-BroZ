@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Home{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Comic Bro'Z - Your one-stop destination for superhero comics and graphic novels.">
+<meta name="keywords" content="comics, superhero, graphic novels, Comic Bro'Z">
+{% endblock %}
+
+{% block content %}
+<div class="hero_area">
+    <section class="comic-slider">
+        <div class="comic-slide active">
+            <div class="content">
+                <div class="text">
+                    <h1>Enter the Comic Verse</h1>
+                    <p>Discover stories that leap off the page! Dive into our latest adventures.</p>
+                    <a href="{% url 'comics' %}" class="btn">Buy Now</a>
+                </div>
+                <div class="hero-img">
+                    <img src="{% static 'edgecut/images/101.png' %}" alt="Superhero illustration">
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Comic Section -->
+<section class="furniture_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Our Comics</h2>
+            <p>Discover our amazing collection of comics</p>
+        </div>
+        <div class="row">
+            {% for comic in comics %}
+            <div class="col-md-6 col-lg-4">
+                <div class="box" data-aos="zoom-in">
+                    <div class="img-box">
+                        {% if comic.image %}
+                        <img src="{{ comic.image.url }}" alt="{{ comic.title|default:'Comic' }}">
+                        {% else %}
+                        <img src="{% static 'edgecut/images/default.png' %}" alt="{{ comic.title|default:'Comic' }}">
+                        {% endif %}
+                    </div>
+                    <div class="detail-box">
+                        <h5>{{ comic.title|default:"Untitled Comic" }}</h5>
+                        <div class="price_box">
+                            <h6 class="price_heading"><span>$</span> {{ comic.price|default:"0.00" }}</h6>
+                            {% if comic.id or comic.pk %}
+                            <a href="{% url 'comic_detail' comic.id|default:comic.pk %}">Buy Now</a>
+                            {% else %}
+                            <a href="{% url 'comics' %}">View Comics</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p>No comics available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about_section layout_padding long_section" data-aos="fade-up">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="img-box">
+                    <img src="{% static 'edgecut/images/201.png' %}" alt="About Comic Bro'Z illustration">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="detail-box">
+                    <div class="heading_container">
+                        <h2>Character Cards</h2>
+                    </div>
+                    <p>
+                        Dive into the world of legendary heroes! Discover their iconic abilities, signature moves, and
+                        epic battles through our exclusive character cards, each packed with thrilling details and
+                        dynamic flair.
+                    </p>
+                    <a href="{% url 'character_card' %}">Dive</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Section -->
+<section class="blog_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Latest Blog</h2>
+        </div>
+        <div class="row">
+            {% for blog in blogs %}
+            <div class="col-md-6 col-lg-4 mx-auto">
+                <div class="box" data-aos="zoom-in">
+                    <div class="img-box">
+                        {% if blog.image %}
+                        <img src="{{ blog.image.url }}" alt="{{ blog.title|default:'Blog' }}">
+                        {% else %}
+                        <img src="{% static 'edgecut/images/default-blog.jpg' %}" alt="{{ blog.title|default:'Blog' }}">
+                        {% endif %}
+                    </div>
+                    <div class="detail-box">
+                        <h5>{{ blog.title|default:"Untitled Blog" }}</h5>
+                        <p>{{ blog.content|truncatewords:20|default:"No content available." }}</p>
+                        <a href="{% url 'blog_detail' blog.id|default:blog.pk %}">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Contact Section -->
+<section class="contact_section layout_padding long_section" data-aos="fade-up">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form_container">
+                    <div class="heading_container">
+                        <h2>Contact Us</h2>
+                    </div>
+                    <form action="{% url 'contact' %}" method="post">
+                        {% csrf_token %}
+                        <div>
+                            <input type="text" placeholder="Your Name" name="name" required />
+                        </div>
+                        <div>
+                            <input type="text" placeholder="Phone Number" name="phone" />
+                        </div>
+                        <div>
+                            <input type="email" placeholder="Email" name="email" required />
+                        </div>
+                        <div>
+                            <input type="text" class="message-box" placeholder="Message" name="message" required
+                                maxlength="200" />
+                            <small id="messageCounter" class="form-text text-muted">0/200 characters</small>
+                        </div>
+                        <div class="btn_box">
+                            <button type="submit">SEND</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="map_container">
+                    <div class="map">
+                        <img src="https://assets.dochipo.com/editor/animations/contact-us/f38f563a-53fc-4527-a085-eeb2dba0c84f.gif"
+                            alt="Animated contact illustration" style="width:100%; height:auto;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Contact Form Character Counter
+    document.querySelector('.message-box').addEventListener('input', function () {
+        const count = this.value.length;
+        document.getElementById('messageCounter').textContent = `${count}/200 characters`;
+    });
+</script>
+{% endblock %}

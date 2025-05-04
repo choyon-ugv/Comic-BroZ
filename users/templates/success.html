@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
+    <title>Comic Bro'Z - Payment Successful</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            background: #1a1a2e;
+            overflow-x: hidden;
+        }
+
+        .parallax-bg {
+            background: url('{% static "edgecut/images/comic-bg.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .halftone-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAB9JREFUGFdjZGBg+M9AQUFBP4jFxcX/QEFBgf8fCQkJ/QB0rwcN8gAAAABJRU5ErkJggg==') repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero_area {
+            position: relative;
+            z-index: 1;
+        }
+
+        .comic-container {
+            max-width: 800px;
+            margin: 60px auto;
+            background: rgba(42, 42, 59, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .comic-header {
+            background: linear-gradient(45deg, #ff4d6d, #ffda79);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comic-header h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 2px 2px #ff4d6d;
+            margin: 0;
+        }
+
+        .action-btn {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 12px 24px;
+            background: #ff4d6d;
+            color: #fff;
+            border-radius: 8px;
+
+            text FaceBook Pixel is not included because it would be too resource-intensive to include it here. You can add it manually in the footer if needed. .action-btn:hover {
+                background: #ffda79;
+                color: #2a2a3b;
+                transform: scale(1.1);
+            }
+
+            .action-btn i {
+                margin-right: 8px;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="parallax-bg"></div>
+    <div class="halftone-overlay"></div>
+    <div class="hero_area">
+        <header class="header_section long_section px-0">
+            <nav class="navbar navbar-expand-lg custom_nav-container">
+                <a class="navbar-brand" href="{% url 'home' %}"><span>Comic Bro'Z</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class=""></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'movies' %}">Movies</a></li>
+                            <li class="nav-item active"><a class="nav-link" href="{% url 'comics' %}">Comics</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'blogs' %}">Blog</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="quote_btn-container">
+                        {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
+                                <li class="dropdown-item d-flex align-items-center">
+                                    {% if user.profile.profile_image %}
+                                    <img src="{{ user.profile.profile_image.url }}" alt="Profile"
+                                        class="rounded-circle me-2"
+                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                    {% else %}
+                                    <i class="fa fa-user-circle fa-2x me-2" aria-hidden="true"></i>
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ user.username }}</strong><br>
+                                        <small>{{ user.email }}</small>
+                                    </div>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'login' %}"><span>Login</span><i class="fa fa-user" aria-hidden="true"></i></a>
+                        {% endif %}
+                        <form class="form-inline">
+                            <button class="btn my-2 my-sm-0 nav_search-btn" type="submit"><i class="fa fa-search"
+                                    aria-hidden="true"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <div class="comic-container" data-aos="fade-up">
+            <div class="comic-header" data-aos="zoom-in">
+                <h2>Payment Successful!</h2>
+            </div>
+            <p>Thank you for purchasing <strong>{{ order.comic.title }}</strong>!</p>
+            <a href="{% url 'comic_read' order.comic.id %}" class="action-btn"><i class="fa fa-book"></i> Read Comic</a>
+            <a href="{% url 'comics' %}" class="action-btn"><i class="fa fa-arrow-left"></i> Back to Comics</a>
+        </div>
+    </div>
+    <section class="info_section long_section">
+        <div class="container">
+            <div class="info_top">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="info_links">
+                            <h4>QUICK LINKS</h4>
+                            <div class="info_links_menu">
+                                <a href="{% url 'home' %}">Home</a>
+                                <a href="{% url 'about' %}">About</a>
+                                <a href="{% url 'comics' %}">Comics</a>
+                                <a href="{% url 'blogs' %}">Blog</a>
+                                <a href="{% url 'contact' %}">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg-3 mx-auto">
+                        <div class="info_post">
+                            <h5>INSTAGRAM FEEDS</h5>
+                            <div class="post_box">
+                                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
+                                        alt="Instagram Post"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info_form">
+                            <h4>SIGN UP TO OUR NEWSLETTER</h4>
+                            <form action="">
+                                <input type="email" placeholder="Enter Your Email" name="email" required />
+                                <button type="submit">Subscribe</button>
+                            </form>
+                            <div class="social_box">
+                                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer_section">
+        <div class="container">
+            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Comic
+                    Bro'Z</a></p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="{% static 'edgecut/js/slick.min.js' %}"></script>
+    <script src="{% static 'edgecut/js/custom.js' %}"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+        document.getElementById('displayYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+
+</html>

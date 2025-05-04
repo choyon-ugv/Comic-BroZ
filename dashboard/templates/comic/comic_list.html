@@ -1,0 +1,140 @@
+{% extends 'custom_base.html' %}
+{% load static %}
+
+{% block title %}
+Comic List | Comic Bro'Z
+{% endblock %}
+
+{% block extrahead %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Comic List</h5>
+            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBlogModal">
+                <i class="fas fa-plus me-1"></i> Add New Comic
+                </a>
+        </div>
+        <div class="card-body">
+            <table id="comicTable" class="table table-striped table-bordered nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Purchased</th>
+                        <th>Read</th>
+                        <th>Favorited</th>
+                        <th>Badges</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comic in comics %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ comic.title|truncatewords:5 }}</td>
+                        <td>{{ comic.description|truncatewords:10 }}</td>
+                        <td>${{ comic.price }}</td>
+                        <td>{{ comic.purchased_by.count }}</td>
+                        <td>{{ comic.read_by.count }}</td>
+                        <td>{{ comic.favorited_by.count }}</td>
+                        <td>
+                            {% if comic.id == max_read_id %}
+                            <span class="badge bg-success">Most Read</span>
+                            {% endif %}
+                            {% if comic.id == max_favorite_id %}
+                            <span class="badge bg-warning text-dark">Top Favorite</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'admin_comic_detail' comic.pk %}" class="btn btn-sm btn-info mb-1">View</a>
+                            <a href="{% url 'admin_comic_edit' comic.pk %}" class="btn btn-sm btn-warning mb-1">Edit</a>
+                            <a href="{% url 'admin_comic_delete' comic.pk %}"
+                                class="btn btn-sm btn-danger mb-1">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Add New Blog -->
+<div class="modal fade" id="addBlogModal" tabindex="-1" aria-labelledby="addBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBlogModalLabel">Add New Comic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Comic Form -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'admin_comic_add' %}">
+                    {% csrf_token %}
+
+                    <div class="form-group mb-3">
+                        <label for="id_title">Title</label>
+                        <input type="text" name="title" class="form-control" id="id_title"
+                            value="{{ form.title.value|default:'' }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="id_description">Description</label>
+                        <textarea name="description" class="form-control"
+                            id="id_description">{{ form.content.value|default:'' }}</textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="id_price">Price</label>
+                        <input type="text" name="price" class="form-control" id="id_price"
+                            value="{{ form.title.value|default:'' }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="id_image">Image</label>
+                        <input type="file" name="image" class="form-control" id="id_image">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Blog</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#comicTable').DataTable({
+            scrollX: true,
+            responsive: false,
+            autoWidth: false,
+            pageLength: 10,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search comics..."
+            }
+        });
+    });
+</script>
+{% endblock %}

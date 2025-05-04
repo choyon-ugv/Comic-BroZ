@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ comic.title }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">{{ comic.title }}</h1>
+            <p class="subtitle">${{ comic.price }}</p>
+            {% if comic.image %}
+            <img src="{{ comic.image.url }}" alt="{{ comic.title }}" style="max-width: 300px;">
+            {% endif %}
+            <p>{{ comic.description }}</p>
+            {% if comic in user.purchased_comics.all %}
+            <p><strong>You already purchased this comic!</strong></p>
+            {% else %}
+            <button class="button is-primary" id="buy-button">Buy Now</button>
+            {% endif %}
+        </div>
+    </section>
+
+    <script>
+        const stripe = Stripe('{{ stripe_publishable_key }}');
+        const buyButton = document.getElementById('buy-button');
+        if (buyButton) {
+            buyButton.addEventListener('click', async () => {
+                buyButton.disabled = true;
+                buyButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+                try {
+                    const response = await fetch(`/comics/${buyButton.dataset.comicId}/purchase/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.error) {
+                        alert(data.error);
+                        buyButton.disabled = false;
+                        buyButton.innerHTML = '<i class="fa fa-shopping-cart"></i> Purchase Comic';
+                        return;
+                    }
+                    await stripe.redirectToCheckout({ sessionId: data.id });
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    buyButton.disabled = false;
+                    buyButton.innerHTML = '<i class="fa fa-shopping-cart"></i> Purchase Comic';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

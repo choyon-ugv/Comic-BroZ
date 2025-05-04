@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Character Cards{% endblock %}
+
+{% block extra_css %}
+<style>
+    .character-card-list {
+        padding: 60px 0;
+        background: #2a2a3b;
+        background-blend-mode: overlay;
+    }
+
+    .section-title {
+        font-family: 'Bangers', cursive;
+        font-size: 2.5rem;
+        color: #ffda79;
+        text-shadow: 2px 3px 0 #ff4d6d;
+        text-align: center;
+        margin-bottom: 106px;
+        letter-spacing: 2px;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 50px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .character-card {
+        position: relative;
+        height: 800px;
+        perspective: 1000px;
+        transition: transform 0.6s;
+    }
+
+    .character-card:hover .card-inner {
+        transform: rotateY(180deg);
+    }
+
+    .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+    }
+
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border: 6px solid #000;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 234, 0, 0.8), inset 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+
+    .card-front {
+        background: #000;
+    }
+
+    .card-back {
+        background: linear-gradient(45deg, #ff0000, #ffea00);
+        transform: rotateY(180deg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .back-title {
+        font-family: 'Bangers', cursive;
+        font-size: 30px;
+        color: #000;
+        text-shadow: 2px 2px 0 #fff;
+        margin-bottom: 20px;
+    }
+
+    .back-content {
+        position: relative;
+        background: #fff;
+        color: #000;
+        padding: 20px;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+        border: 4px solid #000;
+        border-radius: 15px;
+        max-width: 80%;
+        text-shadow: 1px 1px 0 #ff0000;
+        box-shadow: 5px 5px 0 #000;
+    }
+
+    .back-content::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-top: 20px solid #000;
+        z-index: -1;
+    }
+
+    .back-content::before {
+        content: '';
+        position: absolute;
+        bottom: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 13px solid transparent;
+        border-right: 13px solid transparent;
+        border-top: 18px solid #fff;
+    }
+
+    .character-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        filter: brightness(1.1) saturate(1.2);
+    }
+
+    .character-image-fallback {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #ff0000, #1a1a1a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Bangers', cursive;
+        font-size: 30px;
+        color: #fff;
+        text-shadow: 3px 3px 0 #000;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+
+    .name-starburst {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: url('https://www.transparenttextures.com/patterns/starburst.png'), #ff0000;
+        background-size: cover;
+        color: #fff;
+        padding: 8px 20px; /* Reduced padding to make the circle smaller */
+        font-family: 'Bangers', cursive;
+        font-size: 20px; /* Reduced font size */
+        text-transform: uppercase;
+        border: 4px solid #000; /* Slightly thinner border */
+        border-radius: 50%;
+        z-index: 2;
+        text-shadow: 2px 2px 0 #000; /* Adjusted shadow for smaller size */
+        box-shadow: 0 0 10px rgba(255, 234, 0, 0.8); /* Adjusted glow */
+    }
+
+    .card-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        padding: 25px;
+        z-index: 2;
+        border-top: 5px solid #ffea00;
+        box-shadow: 0 -5px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    .stat {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 16px;
+        margin: 6px 0;
+        text-shadow: 1px 1px 0 #000;
+    }
+
+    .stat-label {
+        font-weight: bold;
+        color: #ffea00;
+    }
+
+    .total-rating {
+        font-family: 'Bangers', cursive;
+        font-size: 20px;
+        text-align: center;
+        margin: 10px 0;
+        background: #ff0000;
+        color: #fff;
+        padding: 8px;
+        border: 3px solid #fff;
+        border-radius: 8px;
+        text-shadow: 2px 2px 0 #000;
+        box-shadow: 0 0 10px rgba(255, 234, 0, 0.5);
+    }
+
+    .fact-file {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 14px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+        padding: 12px;
+        border: 3px solid #000;
+        border-radius: 10px;
+        margin-top: 10px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="character-card-list">
+    <div class="container">
+        <h2 class="section-title">Character Cards</h2>
+        <div class="cards-grid">
+            {% for character in characters %}
+            <div class="character-card" data-aos="zoom-in">
+                <div class="card-inner">
+                    <div class="card-front">
+                        {% if character.image %}
+                        <img src="{{ character.image.url }}" alt="{{ character.name }}" class="character-image">
+                        {% else %}
+                        <div class="character-image-fallback">No Image</div>
+                        {% endif %}
+                        <div class="name-starburst">{{ character.name }}</div>
+                        <div class="card-overlay">
+                            <div class="stat"><span class="stat-label">Title:</span> {{ character.title }}</div>
+                            <div class="stat"><span class="stat-label">Debut Year:</span> {{ character.debut_year }}</div>
+                            <div class="stat"><span class="stat-label">Special Powers:</span> {{ character.special_powers }}/50</div>
+                            <div class="stat"><span class="stat-label">Cunning:</span> {{ character.cunning }}/50</div>
+                            <div class="stat"><span class="stat-label">Strength:</span> {{ character.strength }}/50</div>
+                            <div class="stat"><span class="stat-label">Technology:</span> {{ character.technology }}/50</div>
+                            <div class="total-rating">
+                                Total Rating: 
+                                {{ character.special_powers|add:character.cunning|add:character.strength|add:character.technology }}/200
+                            </div>
+                            <div class="fact-file">{{ character.fact_file }}</div>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="back-title">{{ character.name }}'s Epic Moment!</div>
+                        <div class="back-content">
+                            {% if character.back_content %}
+                                {{ character.back_content }}
+                            {% else %}
+                                Ready to Battle!
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="text-align: center; font-family: 'Bangers', cursive; color: #fff; font-size: 24px;">No Character Cards Yet!</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    AOS.init({ duration: 1200, once: true });
+</script>
+{% endblock %}

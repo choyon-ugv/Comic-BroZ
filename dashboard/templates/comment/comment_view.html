@@ -1,0 +1,21 @@
+{% extends 'custom_base.html' %}
+
+{% block title %}
+View Comment | Comic Bro'Z
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">View Comment</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>User:</strong> {{ comment.user.username }}</p>
+            <p><strong>Blog Title:</strong> {{ comment.blog.title }}</p>
+            <p><strong>Content:</strong> {{ comment.content }}</p>
+            <p><strong>Created At:</strong> {{ comment.created_at }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Write a Blog{% endblock %}
+
+{% block body_class %}sub_page{% endblock %}
+
+{% block content %}
+<section class="blog_section layout_padding">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Write a Blog</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="box" style="background: #383850; border: 3px solid #ff4d6d; border-radius: 10px; padding: 25px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="id_title" style="color: #ffda79; font-family: 'Bangers', cursive;">Title</label>
+                            <input type="text" class="form-control" name="title" id="id_title" required
+                                   style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;" placeholder="Enter blog title">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="id_content" style="color: #ffda79; font-family: 'Bangers', cursive;">Content</label>
+                            <textarea class="form-control" name="content" id="id_content" rows="10" required
+                                      style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;" placeholder="Write your blog content here"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="id_image" style="color: #ffda79; font-family: 'Bangers', cursive;">Image (Optional)</label>
+                            <input type="file" class="form-control-file" name="image" id="id_image"
+                                   style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">
+                        </div>
+                        {% if form.errors %}
+                        <div class="alert alert-danger" style="background: #383850; border: 2px solid #ff4d6d; color: #fff;">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary"
+                                    style="background: #ffda79; color: #2a2a3b; border: 2px solid #ff4d6d; font-family: 'Bangers', cursive; transition: transform 0.3s, background 0.3s;">
+                                Post Blog
+                            </button>
+                            <a href="{% url 'blogs' %}" class="btn btn-secondary"
+                               style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d; font-family: 'Bangers', cursive; transition: transform 0.3s, background 0.3s;">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

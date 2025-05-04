@@ -1,0 +1,24 @@
+{% extends 'custom_base.html' %}
+{% load static %}
+
+{% block title %}
+Delete Profile | Comic Bro'Z
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Confirm Delete Profile</h5>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the profile for <strong>{{ object.user.username }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                <a href="{% url 'profile_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

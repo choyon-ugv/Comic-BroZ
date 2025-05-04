@@ -1,0 +1,148 @@
+{% extends 'custom_base.html' %}
+{% block title %}{{ blog.title }} | Blog Details{% endblock %}
+
+{% block content %}
+<div class="container-xl flex-grow-1 py-5">
+    <!-- Blog Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">{{ blog.title }}</h1>
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-3">
+            <div class="d-flex align-items-center">
+                <span class="avatar avatar-sm me-2">
+                    <span class="avatar-initial rounded-circle bg-primary text-white">
+                        {{ blog.author.username|first|upper }}
+                    </span>
+                </span>
+                <span>{{ blog.author.username }}</span>
+            </div>
+            <span class="text-muted">
+                <i class="bx bx-calendar me-1"></i>
+                {{ blog.created_at|date:"F j, Y" }}
+            </span>
+            {% if blog.updated_at != blog.created_at %}
+            <span class="text-muted">
+                <i class="bx bx-edit me-1"></i>
+                Updated {{ blog.updated_at|timesince }} ago
+            </span>
+            {% endif %}
+            {% if blog.likes %}
+            <span class="text-muted">
+                <i class="bx bx-like me-1"></i>
+                {{ blog.likes.count }} Likes
+            </span>
+            {% else %}
+            <span class="text-muted">
+                <i class="bx bx-like me-1"></i>
+                0 Likes
+            </span>
+            {% endif %}
+            <span class="text-muted">
+                <i class="bx bx-comment me-1"></i>
+                {{ blog.comments.count }} Comments
+            </span>
+        </div>
+    </div>
+
+    <!-- Blog Image -->
+    {% if blog.image %}
+    <div class="mb-5">
+        <img src="{{ blog.image.url }}" alt="Featured image for {{ blog.title }}"
+             class="img-fluid rounded-3 shadow-sm w-100"
+             style="max-height: 500px; object-fit: cover;">
+    </div>
+    {% endif %}
+
+    <!-- Blog Content -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body p-5">
+            <div class="blog-content mb-4">
+                {{ blog.content|linebreaks }}
+            </div>
+
+            <!-- Tags -->
+            {% if blog.tags.all %}
+            <div class="d-flex flex-wrap gap-2">
+                {% for tag in blog.tags.all %}
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-normal px-3 py-2">
+                    {{ tag.name }}
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-start mb-5">
+        <a href="{% url 'blog_list' %}" class="btn btn-outline-secondary px-4 py-2">
+            <i class="bx bx-arrow-back me-2"></i>Back to Blogs
+        </a>
+    </div>
+
+    <!-- Comments Section -->
+    {% if blog.comments.all %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-transparent py-4">
+            <h4 class="mb-0">Comments ({{ blog.comments.count }})</h4>
+        </div>
+        <div class="card-body">
+            {% for comment in blog.comments.all %}
+            <div class="d-flex mb-4 pb-4 border-bottom">
+                <span class="avatar avatar-sm me-3">
+                    <span class="avatar-initial rounded-circle bg-info text-white">
+                        {{ comment.user.username|first|upper }}
+                    </span>
+                </span>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0">{{ comment.user.username }}</h6>
+                        <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                    </div>
+                    <p class="mb-2">{{ comment.text|linebreaks }}</p>
+                    {% if user.is_superuser %}
+                    <div class="text-muted small bg-light p-2 rounded">
+                        <strong>Comment ID:</strong> {{ comment.id }}<br>
+                        <strong>Comment Text:</strong> {{ comment.content|truncatechars:100 }}<br>
+                        <strong>Created:</strong> {{ comment.created_at|date:"F j, Y, H:i" }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .blog-content {
+        font-size: 1.125rem;
+        line-height: 1.75;
+        color: #333;
+    }
+    .blog-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.75rem;
+        margin: 1.5rem 0;
+    }
+    .blog-content p {
+        margin-bottom: 1.5rem;
+    }
+    .avatar-sm {
+        width: 2.5rem;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        font-size: 1rem;
+    }
+    .btn {
+        transition: all 0.3s ease;
+    }
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %}

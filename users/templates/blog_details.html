@@ -1,0 +1,504 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
+  <title>Comic Bro'Z - {{ blog.title }}</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'edgecut/css/bootstrap.css' %}" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
+  <style>
+    /* Estilos adicionales para la sección de autor y comentarios */
+    .speech-bubble {
+      position: relative;
+      background: #383850;
+      border: 3px solid #ff4d6d;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 20px;
+      border-width: 10px;
+      border-style: solid;
+      border-color: #383850 transparent transparent transparent;
+    }
+    .blog_detail_box {
+      background: #383850;
+      border: 3px solid #ff4d6d;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .comments_box {
+      background: #383850;
+      border: 3px solid #ff4d6d;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .comment-item {
+      background: #2a2a3b;
+      border: 2px solid #ffda79;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .sidebar {
+      background: #383850;
+      border: 3px solid #ff4d6d;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .modal-content {
+      background: #383850;
+      border: 3px solid #ff4d6d;
+      border-radius: 8px;
+      color: #fff;
+    }
+    .modal-header, .modal-footer {
+      border-color: #ffda79;
+    }
+    .btn-primary, .btn-danger, .btn-outline-danger, .btn-outline-primary {
+      background: #ffda79;
+      color: #2a2a3b;
+      border: 2px solid #ff4d6d;
+      font-family: "Bangers", cursive;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .btn-primary:hover, .btn-danger:hover, .btn-outline-danger:hover, .btn-outline-primary:hover {
+      background: #fff;
+      color: #ff4d6d;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body class="sub_page">
+  <!-- Parallax and Halftone -->
+  <div class="parallax-bg"></div>
+  <div class="halftone-overlay"></div>
+
+  <div class="hero_area">
+    <!-- Header Section -->
+    <header class="header_section long_section px-0">
+      <nav class="navbar navbar-expand-lg custom_nav-container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <span>Comic Bro'Z</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class=""></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'about' %}">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'movies' %}">Movies</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'comics' %}">Comics</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'blogs' %}">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+              </li>
+            </ul>
+          </div>
+          <div class="quote_btn-container">
+            {% if user.is_authenticated %}
+            <div class="dropdown">
+              <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+                <div class="dropdown-item d-flex align-items-center">
+                  {% if user.profile.profile_image %}
+                  <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="rounded-circle mr-2"
+                    style="width: 40px; height: 40px; object-fit: cover;">
+                  {% else %}
+                  <i class="fa fa-user-circle fa-2x mr-2" aria-hidden="true"></i>
+                  {% endif %}
+                  <div>
+                    <strong>{{ user.username }}</strong>
+                    <br>
+                    <small>{{ user.email }}</small>
+                  </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+              </div>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}">
+              <span>Login</span>
+              <i class="fa fa-user" aria-hidden="true"></i>
+            </a>
+            {% endif %}
+            <form class="form-inline">
+              <button class="btn my-2 my-sm-0 nav_search-btn" type="submit">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+    </header>
+  </div>
+
+  <!-- Messages -->
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert"
+         style="background: #383850; border: 2px solid #ff4d6d; color: #fff;">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <section class="blog_details_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="blog_detail_box">
+            <div class="card-body">
+              {% if blog.image %}
+              <img src="{{ blog.image.url }}" class="img-fluid rounded mb-4" alt="{{ blog.title }}">
+              {% endif %}
+              <h1 class="card-title mb-3" style="font-family: 'Bangers', cursive; color: #ffda79; text-shadow: 2px 2px #ff4d6d;">{{ blog.title }}</h1>
+              <div class="blog-meta mb-4" style="color: #ccc;">
+                <i class="fa fa-heart"></i> {{ likes_count }} Likes
+              </div>
+              <div class="speech-bubble">
+                <p><i class="fa fa-user mr-2"></i> By {{ blog.author.username|default:"Anonymous" }}</p>
+                <p><i class="fa fa-calendar mr-2"></i> Created: {{ blog.created_at|date:"F d, Y H:i" }}</p>
+                <p><i class="fa fa-clock-o mr-2"></i> Updated: {{ blog.updated_at|date:"F d, Y H:i" }}</p>
+              </div>
+              <div class="blog-content" style="color: #ccc;">
+                {{ blog.content|linebreaks }}
+              </div>
+              <div class="mt-4">
+                <form method="POST" action="{% url 'like_blog' blog.id %}" class="d-inline like-form">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger">
+                    <i class="fa fa-heart{% if user_liked %}-o{% endif %}"></i>
+                    {% if user.is_authenticated %}
+                    {% if user_liked %}Unlike{% else %}Like{% endif %}
+                    {% else %}
+                    Like
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="comments_box mt-4">
+            <div class="card-body">
+              <h3 class="card-title mb-4" style="font-family: 'Bangers', cursive; color: #ffda79;">{{ comments.count }} Comments</h3>
+              <form method="POST" action="{% url 'add_comment' blog.id %}" class="mb-5 comment-form">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                  <textarea class="form-control" name="content" rows="4" placeholder="Write your comment..."
+                    style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+              </form>
+              {% for comment in comments %}
+              <div class="comment-item" id="comment-{{ comment.id }}">
+                <div class="d-flex align-items-start">
+                  <div class="comment-avatar me-3">
+                    <i class="fa fa-user-circle fa-2x" style="color: #ffda79;"></i>
+                  </div>
+                  <div class="comment-body flex-grow-1">
+                    <h5 class="mb-1" style="color: #ffda79; font-family: 'Bangers', cursive;">
+                      {% if comment.user %}
+                      {{ comment.user.username|default:comment.user.email }}
+                      {% else %}
+                      Anonymous
+                      {% endif %}
+                    </h5>
+                    <p class="text-muted small mb-2" style="color: #ccc;">{{ comment.created_at|date:"F d, Y H:i" }}</p>
+                    <p class="comment-content" style="color: #ccc;">{{ comment.content }}</p>
+                    {% if user.is_authenticated and comment.user == user %}
+                    <div class="comment-actions mt-2">
+                      <button class="btn btn-sm btn-outline-primary edit-comment-btn" data-toggle="modal"
+                        data-target="#editCommentModal" data-comment-id="{{ comment.id }}"
+                        data-comment-content="{{ comment.content|escapejs }}">Edit</button>
+                      <button class="btn btn-sm btn-outline-danger delete-comment-btn" data-toggle="modal"
+                        data-target="#deleteCommentModal" data-comment-id="{{ comment.id }}">Delete</button>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <p class="text-muted" style="color: #ccc;">No comments yet. Be the first to comment!</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="sidebar">
+            <h4 class="mb-4" style="font-family: 'Bangers', cursive; color: #ffda79;">Recent Posts</h4>
+            {% for recent_blog in recent_blogs %}
+            <div class="recent-post mb-3 pb-3 border-bottom" style="border-color: #ff4d6d;">
+              <a href="{% url 'blog_detail' recent_blog.id %}" class="text-decoration-none" style="color: #ccc;">
+                <h6 style="color: #ffda79; font-family: 'Bangers', cursive;">{{ recent_blog.title }}</h6>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Comment Modal -->
+      <div class="modal fade" id="editCommentModal" tabindex="-1" role="dialog" aria-labelledby="editCommentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editCommentModalLabel" style="font-family: 'Bangers', cursive; color: #ffda79;">Edit Comment</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="color: #ffda79;">×</span>
+              </button>
+            </div>
+            <form method="POST" id="editCommentForm">
+              {% csrf_token %}
+              <div class="modal-body">
+                <div class="form-group">
+                  <textarea class="form-control" name="content" id="editCommentContent" rows="4"
+                    style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;" required></textarea>
+                  <input type="hidden" name="comment_id" id="editCommentId">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Comment Modal -->
+      <div class="modal fade" id="deleteCommentModal" tabindex="-1" role="dialog"
+        aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteCommentModalLabel" style="font-family: 'Bangers', cursive; color: #ffda79;">Delete Comment</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" style="color: #ffda79;">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete this comment?
+            </div>
+            <form method="POST" id="deleteCommentForm">
+              {% csrf_token %}
+              <input type="hidden" name="comment_id" id="deleteCommentId">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <section class="info_section long_section">
+    <div class="container">
+      <div class="info_top">
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="info_links">
+              <h4>QUICK LINKS</h4>
+              <div class="info_links_menu">
+                <a class="" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                <a class="" href="{% url 'about' %}">About</a>
+                <a class="" href="{% url 'comics' %}">Comics</a>
+                <a class="" href="{% url 'blogs' %}">Blog</a>
+                <a class="" href="{% url 'contact' %}">Contact Us</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-4 col-lg-3 mx-auto">
+            <div class="info_post">
+              <h5>INSTAGRAM FEEDS</h5>
+              <div class="post_box">
+                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
+                        alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
+                        alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
+                        alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
+                        alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
+                        alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
+                        alt="Instagram Post"></div>
+            </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info_form">
+              <h4>Read. Shop. Explore. The Comic World Awaits You!</h4>
+              <form action="">
+                <input type="text" placeholder="Enter Your Email" />
+                <button type="submit">Subscribe</button>
+              </form>
+              <div class="social_box">
+                <a href=""><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                <a href=""><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                <a href=""><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                <a href=""><i class="fa fa-instagram" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer_section">
+    <div class="container">
+      <p>© <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Bro'Z Comic</a></p>
+    </div>
+  </footer>
+
+  <script src="{% static 'edgecut/js/jquery-3.4.1.min.js' %}"></script>
+  <script src="{% static 'edgecut/js/bootstrap.js' %}"></script>
+  <script src="{% static 'edgecut/js/custom.js' %}"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+  <script>
+    $(document).ready(function () {
+      // Handle Like Form Submission
+      $('.like-form').on('submit', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var url = $form.attr('action');
+        var likeButton = $form.find('button');
+        var likesCountElement = $('.blog-meta').find('i.fa-heart').parent();
+        $.ajax({
+          type: 'POST',
+          url: url,
+          data: $form.serialize(),
+          success: function (response) {
+            if (response.success) {
+              likesCountElement.text(` ${response.likes_count} Likes`);
+              if (response.liked) {
+                likeButton.html('<i class="fa fa-heart"></i> Unlike');
+              } else {
+                likeButton.html('<i class="fa fa-heart-o"></i> Like');
+              }
+            } else {
+              alert(response.message || 'An error occurred.');
+            }
+          },
+          error: function () {
+            alert('An error occurred while processing your request.');
+          },
+          headers: {
+            'X-CSRF-Token': $('[name=csrfmiddlewaretoken]').val()
+          }
+        });
+      });
+
+      // Handle Comment Form Submission
+      $('.comment-form').on('submit', function (e) {
+        e.preventDefault();
+        var $form = $(this);
+        var url = $form.attr('action');
+        var commentContent = $form.find('textarea[name=content]').val();
+        var commentsCountElement = $('.comments_box .card-title');
+        $.ajax({
+          type: 'POST',
+          url: url,
+          data: $form.serialize(),
+          success: function (response) {
+            if (response.success) {
+              var newComment = `
+                <div class="comment-item mb-4" id="comment-${response.comment_id}">
+                  <div class="d-flex align-items-start">
+                    <div class="comment-avatar me-3">
+                      <i class="fa fa-user-circle fa-2x" style="color: #ffda79;"></i>
+                    </div>
+                    <div class="comment-body flex-grow-1">
+                      <h5 class="mb-1" style="color: #ffda79; font-family: 'Bangers', cursive;">${response.user_username || 'Anonymous'}</h5>
+                      <p class="text-muted small mb-2" style="color: #ccc;">${response.created_at}</p>
+                      <p class="comment-content" style="color: #ccc;">${response.content}</p>
+                      <div class="comment-actions mt-2">
+                        <button class="btn btn-sm btn-outline-primary edit-comment-btn" data-toggle="modal"
+                          data-target="#editCommentModal" data-comment-id="${response.comment_id}"
+                          data-comment-content="${response.content}">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger delete-comment-btn" data-toggle="modal"
+                          data-target="#deleteCommentModal" data-comment-id="${response.comment_id}">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+              $('.comments_box .card-body').find('.comment-item:last').after(newComment);
+              $form.find('textarea[name=content]').val('');
+              commentsCountElement.text(`${response.comments_count} Comments`);
+            } else {
+              alert(response.message || 'An error occurred.');
+            }
+          },
+          error: function () {
+            alert('An error occurred while processing your request.');
+          },
+          headers: {
+            'X-CSRF-Token': $('[name=csrfmiddlewaretoken]').val()
+          }
+        });
+      });
+
+      // Edit Comment Modal
+      $(document).on('click', '.edit-comment-btn', function () {
+        var commentId = $(this).data('comment-id');
+        var commentContent = $(this).data('comment-content');
+        $('#editCommentId').val(commentId);
+        $('#editCommentContent').val(commentContent);
+        $('#editCommentForm').attr('action', '/blogs/' + {{ blog.id }} + '/comments/' + commentId + '/edit/');
+      });
+
+      // Delete Comment Modal
+      $(document).on('click', '.delete-comment-btn', function () {
+        var commentId = $(this).data('comment-id');
+        $('#deleteCommentId').val(commentId);
+        $('#deleteCommentForm').attr('action', '/blogs/' + {{ blog.id }} + '/comments/' + commentId + '/delete/');
+      });
+    });
+  </script>
+</body>
+</html>

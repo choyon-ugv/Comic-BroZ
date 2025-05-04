@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
+    <title>Comic Bro'Z - Profile</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet">
+    
+    <!-- AOS for animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            background: #1a1a2e;
+            overflow-x: hidden;
+        }
+        .parallax-bg {
+            background: url('{% static "edgecut/images/comic-bg.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .hero_area {
+            position: relative;
+            z-index: 1;
+        }
+        .profile-container {
+            max-width: 1200px;
+            margin: 60px auto;
+            background: rgba(42, 42, 59, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            border-bottom: 3px dashed #ff4d6d;
+            background: linear-gradient(45deg, #ff4d6d, #ffda79);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .profile-header img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .profile-header img:hover {
+            transform: scale(1.1);
+        }
+        .profile-header h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 2px 2px #ff4d6d;
+            margin: 0;
+        }
+        .profile-header PMID {
+            color: #fff;
+            font-style: italic;
+        }
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .theme-switcher select {
+            background: #ff4d6d;
+            color: #fff;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #ff4d6d;
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            font-family: 'Bangers', cursive;
+            color: #fff;
+            font-size: 1.2rem;
+            border: none;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+        .nav-tabs .nav-link:hover,
+        .nav-tabs .nav-link.active {
+            background: #ff4d6d;
+            color: #fff;
+            border-radius: 8px 8px 0 0;
+        }
+        .profile-card {
+            background: #383850;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(255, 77, 109, 0.5);
+        }
+        .stat-card {
+            background: #ff4d6d;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-card h4 {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            margin: 0;
+        }
+        .progress-bar {
+            background-color: #ffda79;
+            transition: width 1s ease-in-out;
+        }
+        .comic-showcase img {
+            width: 100%;
+            border-radius: 10px;
+            border: 3px solid #ffda79;
+            transition: transform 0.3s;
+        }
+        .comic-showcase img:hover {
+            transform: scale(1.05);
+        }
+        .comic-showcase .comic-item {
+            background: #2a2a3b;
+            border-radius: 10px;
+            padding: 15px;
+            height: 100%;
+        }
+        .comic-showcase .comic-item h4 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            color: #ffda79;
+            margin-bottom: 10px;
+        }
+        .comic-showcase .comic-item p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .edit-btn {
+            background: #ffda79;
+            color: #2a2a3b;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .edit-btn:hover {
+            background: #fff;
+            color: #ff4d6d;
+            transform: scale(1.1);
+        }
+        .halftone-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAAXNSR0IArs4c6QAAAB9JREFUGFdjZGBg+M9AQUFBP4jFxcX/QEFBgf8fCQkJ/QB0rwcN8gAAAABJRU5ErkJggg==') repeat;
+            opacity: 0.1;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+        <!-- Profile Section -->
+        <div class="profile-container" data-aos="fade-up">
+            <div class="theme-switcher">
+                <select id="themeSelect">
+                    <option value="ironman">Iron Man</option>
+                    <option value="spiderman">Spider-Man</option>
+                    <option value="darkknight">Dark Knight</option>
+                </select>
+            </div>
+            <div class="profile-header">
+                <img src="{{ request.user.profile.profile_image.url|default:'https://via.placeholder.com/160' }}" alt="Profile Image">
+                <div>
+                    <h2>{{ request.user.username }}</h2>
+                    <p>{{ request.user.profile.favorite_quote|default:"No quote yet." }}</p>
+                    <a href="{% url 'profile-update' %}" class="edit-btn">Edit Profile</a>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">🧑 About</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="comics-tab" data-bs-toggle="tab" data-bs-target="#comics" type="button" role="tab" aria-controls="comics" aria-selected="false">📚 Comics</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="watch-tab" data-bs-toggle="tab" data-bs-target="#watch" type="button" role="tab" aria-controls="watch" aria-selected="false">🎬 Watch History</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="blog-tab" data-bs-toggle="tab" data-bs-target="#blog" type="button" role="tab" aria-controls="blog" aria-selected="false">📝 Blog Activity</button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="profileTabContent">
+                <!-- About Tab -->
+                <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab" data-aos="fade-right">
+                    <div class="profile-card">
+                        <h3>About Me</h3>
+                        <p>{{ profile.bio|default:"Tell us about yourself!" }}</p>
+                    </div>
+                    <div class="profile-card">
+                        <h3>Hero Level</h3>
+                        <p>Current Level: <strong>{{ profile.level }}</strong></p>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ profile.progress }}%;" aria-valuenow="{{ profile.progress }}" aria-valuemin="0" aria-valuemax="100">{{ profile.progress }}%</div>
+                        </div>
+                        <p class="mt-2">
+                            {% if profile.level == "Sidekick" %}
+                                Complete more activities to reach <strong>Hero</strong>!
+                            {% elif profile.level == "Hero" %}
+                                Complete more activities to reach <strong>Superhero</strong>!
+                            {% else %}
+                                You're a <strong>Superhero</strong>! Keep ruling the comic universe!
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Comics Tab -->
+                <div class="tab-pane fade" id="comics" role="tabpanel" aria-labelledby="comics-tab" data-aos="fade-left">
+                    <div class="profile-card">
+                        <h3>My Comics</h3>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ comics_purchased }}">{{ comics_purchased }}</h4>
+                                    <p>Comics Purchased</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ comics_read }}">{{ comics_read }}</h4>
+                                    <p>Comics Read</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ comics_favorited }}">{{ comics_favorited }}</h4>
+                                    <p>Comics Favorited</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-card comic-showcase">
+                        <h3>Favorite Comics</h3>
+                        {% if favorite_comics %}
+                        <div class="row">
+                            {% for item in favorite_comics %}
+                            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ item.delay }}">
+                                <div class="comic-item">
+                                    <img src="{{ item.comic.image.url|default:'https://via.placeholder.com/150' }}" alt="{{ item.comic.title }}">
+                                    <h4>{{ item.comic.title }}</h4>
+                                    <p>{{ item.comic.description|default:"No description available."|truncatechars:100 }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p>No favorite comics selected.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Watch History Tab -->
+                <div class="tab-pane fade" id="watch" role="tabpanel" aria-labelledby="watch-tab" data-aos="fade-right">
+                    <div class="profile-card">
+                        <h3>Watch History</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ movies_watched }}">{{ movies_watched }}</h4>
+                                    <p>Movies Watched</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ hours_streamed }}">{{ hours_streamed }}</h4>
+                                    <p>Hours Streamed</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% if recently_watched %}
+                        <p>Recently watched: <strong>{{ recently_watched.movie.title }}</strong></p>
+                        {% else %}
+                        <p>No movies watched yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Blog Activity Tab -->
+                <div class="tab-pane fade" id="blog" role="tabpanel" aria-labelledby="blog-tab" data-aos="fade-left">
+                    <div class="profile-card">
+                        <h3>Blog Activity</h3>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ blogs_liked }}">{{ blogs_liked }}</h4>
+                                    <p>Blogs Liked</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ comments_posted }}">{{ comments_posted }}</h4>
+                                    <p>Comments Posted</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <h4 class="count" data-target="{{ blogs_written }}">{{ blogs_written }}</h4>
+                                    <p>Blogs Written</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <script>
+            // Initialize AOS
+            AOS.init({
+                duration: 1000,
+                once: true
+            });
+
+            // Theme Switcher
+            const themeSelect = document.getElementById('themeSelect');
+            const profileContainer = document.querySelector('.profile-container');
+            themeSelect.addEventListener('change', function() {
+                const theme = this.value;
+                if (theme === 'ironman') {
+                    profileContainer.style.background = 'rgba(42, 42, 59, 0.9)';
+                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#ffda79');
+                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff4d6d');
+                } else if (theme === 'spiderman') {
+                    profileContainer.style.background = 'rgba(22, 22, 100, 0.9)';
+                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#00b7eb');
+                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff0000');
+                } else if (theme === 'darkknight') {
+                    profileContainer.style.background = 'rgba(10, 10, 10, 0.9)';
+                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#cccccc');
+                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#555555');
+                }
+            });
+
+            // Count-up animation for stats
+            document.querySelectorAll('.count').forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                let count = 0;
+                const increment = target / 50;
+                const updateCount = () => {
+                    if (count < target) {
+                        count += increment;
+                        counter.innerText = Math.ceil(count);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        </script>
+    </body>
+</html>
+{% endblock %}

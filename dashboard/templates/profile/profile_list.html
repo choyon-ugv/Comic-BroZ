@@ -1,0 +1,88 @@
+{% extends 'custom_base.html' %}
+{% load static %}
+
+{% block title %}
+Profile Settings | Comic Bro'Z
+{% endblock %}
+
+{% block extrahead %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<!-- DataTables Responsive CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 float-left">
+                <i class="menu-icon me-2"></i>
+                User Profile List
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive text-nowrap">
+                <table id="profileTable" class="table table-striped table-bordered display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Bio</th>
+                            <th>Level</th>
+                            <th>Progress</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded via AJAX -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- jQuery (ensure it's not duplicated in custom_base.html) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+<!-- DataTables Responsive JS -->
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+<!-- DataTables Initialization -->
+<script>
+    $(document).ready(function () {
+        $('#profileTable').DataTable({
+            serverSide: true,
+            ajax: {
+                url: "{% url 'profile_datatable' %}",
+                type: "POST",
+                data: function (d) {
+                    d.csrfmiddlewaretoken = "{{ csrf_token }}";
+                }
+            },
+            columns: [
+                { data: "id", searchable: false, orderable: false },
+                { data: "username" },
+                { data: "email" },
+                { data: "bio" },
+                { data: "level" },
+                { data: "progress" },
+                { data: "action", searchable: false, orderable: false }
+            ],
+            responsive: true,
+            pageLength: 10,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search profiles..."
+            },
+            processing: true
+        });
+    });
+</script>
+{% endblock %}

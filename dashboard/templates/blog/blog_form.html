@@ -1,0 +1,518 @@
+{% extends 'custom_base.html' %}
+{% block title %}Edit "{{ form.instance.title|truncatechars:20 }}"{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Header Section -->
+    <div class="editor-header">
+        <h1>EDIT BLOG</h1>
+        <a href="{% url 'blog_detail' form.instance.id %}" class="back-button">
+            <span>Back to Post</span>
+            <i class="bx bx-chevron-right"></i>
+        </a>
+    </div>
+
+    <!-- Main Editor Form -->
+    <form method="POST" enctype="multipart/form-data" class="editor-form">
+        {% csrf_token %}
+        
+        <!-- Form Errors -->
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show rounded-lg shadow-sm" role="alert">
+            <h5 class="alert-heading mb-2">Please fix the following errors:</h5>
+            <ul class="mb-0 list-disc pl-5">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <!-- Post Title Section -->
+        <div class="form-section full-width">
+            <label for="{{ form.title.id_for_label }}">Post Title</label>
+            {{ form.title }}
+            <div class="counter">
+                <span id="titleCounter">{{ form.title.value|default_if_none:''|length }}</span>/60 characters
+            </div>
+        </div>
+
+        <!-- Split Layout -->
+        <div class="split-layout">
+            <!-- Left Section: Image and Author -->
+            <div class="split-section left-section">
+                <!-- Featured Image -->
+                <div class="form-section">
+                    <label>Featured Image</label>
+                    <div class="image-uploader">
+                        {% if form.instance.image %}
+                        <div class="image-preview">
+                            <img src="{{ form.instance.image.url }}" alt="Current featured image">
+                            <button type="button" class="btn-remove-image">
+                                <i class="bx bx-trash"></i> Remove
+                            </button>
+                            <input type="checkbox" name="image-clear" id="image-clear" class="d-none">
+                        </div>
+                        {% endif %}
+                        <div class="upload-area {% if form.instance.image %}d-none{% endif %}" id="dropZone">
+                            <div class="upload-content">
+                                <i class="bx bx-image-add"></i>
+                                <p>Drop a comic cover or <span>browse files</span></p>
+                                <small>Recommended size: 1200×630px (Max 5MB)</small>
+                            </div>
+                            {{ form.image }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Author (Read-Only) -->
+                <div class="form-section">
+                  <label>Author</label>
+                  <div class="input-group">
+                      <span class="input-group-text bg-teal bg-opacity-10 text-teal">
+                          <i class="bx bx-user"></i>
+                      </span>
+                      <input type="text" class="form-control" value="{{ form.instance.author.username|default:request.user.username }}" readonly>
+                  </div>
+              </div>
+            </div>
+
+            <!-- Right Section: Content -->
+            <div class="split-section right-section">
+                <div class="form-section">
+                    <label>Post Content</label>
+                    <div class="editor-tools">
+                        <button type="button" data-command="bold"><i class="bx bx-bold"></i></button>
+                        <button type="button" data-command="italic"><i class="bx bx-italic"></i></button>
+                        <button type="button" data-command="underline"><i class="bx bx-underline"></i></button>
+                    </div>
+                    {{ form.content }}
+                    <div class="editor-stats">
+                        <span id="charCount">{{ form.content.value|default_if_none:''|length }}</span> characters • 
+                        <span id="wordCount">{% if form.content.value %}{{ form.content.value|wordcount }}{% else %}0{% endif %}</span> words • 
+                        ~<span id="readingTime">{% widthratio form.content.value|default_if_none:''|wordcount 200 1 %}</span> min read
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <a href="{% url 'blog_list' %}" class="btn-cancel">Discard Changes</a>
+            <button type="submit" class="btn-save">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<!-- Custom CSS -->
+<style>
+    :root {
+        --teal: #0d9488;
+        --orange: #f97316;
+        --text: #1f2937;
+        --text-light: #6b7280;
+        --border: #e5e7eb;
+        --danger: #dc2626;
+        --background: #fff;
+    }
+
+    body {
+        background: #f9fafb;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .editor-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: var(--background);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .editor-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .back-button i {
+        font-size: 1.5rem;
+        margin-left: 0.5rem;
+    }
+
+    .editor-form {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-section label {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 1rem;
+    }
+
+    .full-width {
+        width: 100%;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        background: #f8fafc;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--teal);
+        box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+    }
+
+    textarea {
+        min-height: 400px;
+        resize: vertical;
+        line-height: 1.7;
+    }
+
+    .input-group .form-control[readonly] {
+        background: #f1f5f9;
+        border-color: var(--border);
+    }
+
+    .input-group .author-field {
+        color: var(--text) !important;
+    }
+
+    .input-group-text {
+        border-radius: 8px 0 0 8px;
+        border: 1px solid var(--border);
+    }
+
+    .counter {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-align: right;
+        font-weight: 500;
+    }
+
+    /* Split Layout */
+    .split-layout {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .split-section {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    /* Image Uploader Styles */
+    .image-uploader {
+        width: 100%;
+    }
+
+    .image-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .image-preview img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-remove-image {
+        align-self: flex-start;
+        background: none;
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+
+    .upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        background: #f8fafc;
+    }
+
+    .upload-content i {
+        font-size: 3rem;
+        color: var(--teal);
+        margin-bottom: 1rem;
+    }
+
+    .upload-content p {
+        margin: 0.5rem 0;
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    .upload-content p span {
+        color: var(--teal);
+        font-weight: 600;
+    }
+
+    .upload-content small {
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    /* Editor Tools */
+    .editor-tools {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #f1f5f9;
+        border-radius: 8px 8px 0 0;
+        border: 1px solid var(--border);
+        border-bottom: none;
+    }
+
+    .editor-tools button {
+        background: none;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--text-light);
+    }
+
+    .editor-stats {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-align: right;
+        margin-top: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .btn-cancel {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .btn-save {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        background: var(--teal);
+        border: none;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    /* Alert Styling */
+    .alert {
+        border-radius: 8px;
+        background: rgba(254, 242, 242, 0.9);
+        border: 1px solid #f87171;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .editor-container {
+            padding: 1rem;
+        }
+
+        .editor-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .editor-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .split-layout {
+            flex-direction: column;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn-cancel, .btn-save {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Title character counter
+        const titleInput = document.getElementById('{{ form.title.id_for_label }}');
+        const titleCounter = document.getElementById('titleCounter');
+
+        titleInput.addEventListener('input', function() {
+            titleCounter.textContent = this.value.length;
+        });
+
+        // Content statistics
+        const contentField = document.getElementById('{{ form.content.id_for_label }}');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+        const readingTime = document.getElementById('readingTime');
+
+        function updateStats() {
+            const text = contentField.value;
+            charCount.textContent = text.length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            wordCount.textContent = words;
+            readingTime.textContent = Math.ceil(words / 200) || 1;
+        }
+
+        contentField.addEventListener('input', updateStats);
+        updateStats(); // Initialize
+
+        // Image Upload Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.querySelector('.image-uploader input[type="file"]');
+        const removeBtn = document.querySelector('.btn-remove-image');
+
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                document.querySelector('.image-preview').remove();
+                dropZone.classList.remove('d-none');
+                document.getElementById('image-clear').checked = true;
+            });
+        }
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (!file.type.match('image.*')) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn-remove-image';
+                removeBtn.innerHTML = '<i class="bx bx-trash"></i> Remove';
+
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview';
+                previewDiv.appendChild(preview);
+                previewDiv.appendChild(removeBtn);
+
+                const uploader = document.querySelector('.image-uploader');
+                if (uploader.querySelector('.image-preview')) {
+                    uploader.replaceChild(previewDiv, uploader.querySelector('.image-preview'));
+                } else {
+                    uploader.insertBefore(previewDiv, dropZone);
+                    dropZone.classList.add('d-none');
+                }
+
+                removeBtn.addEventListener('click', function() {
+                    previewDiv.remove();
+                    dropZone.classList.remove('d-none');
+                    fileInput.value = '';
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Editor Toolbar Actions
+        document.querySelectorAll('.editor-tools button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const command = this.getAttribute('data-command');
+                document.execCommand(command, false, null);
+                contentField.focus();
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'custom_base.html' %}
+{% block title %}
+Edit Like | Comic Bro'Z
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Edit Like</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="blog">Blog Title</label>
+                    <select name="blog" class="form-control">
+                        {% for blog in blogs %}
+                            <option value="{{ blog.id }}" {% if blog == like.blog %} selected {% endif %}>{{ blog.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-3">Update Like</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'custom_base.html' %}
+{% block title %}Delete Blog{% endblock %}
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card p-4">
+        <h3>Are you sure you want to delete "{{ blog.title }}"?</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'blog_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

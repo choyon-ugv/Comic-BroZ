@@ -1,0 +1,276 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
+    <title>{% block title %}Comic Bro'Z{% endblock %}</title>
+
+    <!-- Bootstrap 4.5.2 CSS (CDN for consistency with home.html) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
+    <!-- AOS for Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- Custom Styles -->
+    <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Parallax and Halftone -->
+    <div class="parallax-bg"></div>
+    <div class="halftone-overlay"></div>
+
+    <!-- Header Section -->
+    <header class="header_section long_section px-0">
+        <nav class="navbar navbar-expand-lg custom_nav-container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <span>Comic Bro'Z</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class=""></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'movies' %}">Movies</a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'comics' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'comics' %}">Comics</a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'blogs' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'blogs' %}">Blog</a>
+                        </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="quote_btn-container">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+                            <div class="dropdown-item d-flex align-items-center">
+                                {% if user.profile.profile_image %}
+                                <img src="{{ user.profile.profile_image.url }}" alt="Profile"
+                                    class="rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                {% else %}
+                                <i class="fa fa-user-circle fa-2x mr-2" aria-hidden="true"></i>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ user.username }}</strong>
+                                    <br>
+                                    <small>{{ user.email }}</small>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                            <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}">
+                        <span>Login</span>
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    <form class="form-inline">
+                        <button class="btn my-2 my-sm-0 nav_search-btn" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Info Section -->
+    <section class="info_section long_section">
+        <div class="container">
+            <div class="info_top">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="info_links">
+                            <h4>QUICK LINKS</h4>
+                            <div class="info_links_menu">
+                                <a href="{% url 'home' %}">Home</a>
+                                <a href="{% url 'about' %}">About</a>
+                                <a href="{% url 'comics' %}">Comics</a>
+                                <a href="{% url 'blogs' %}">Blog</a>
+                                <a href="{% url 'contact' %}">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg-3 mx-auto">
+                        <div class="info_post">
+                            <h5>INSTAGRAM FEEDS</h5>
+                            <div class="post_box">
+                                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
+                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
+                                        alt="Instagram Post"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info_form">
+                            <h4>Read. Shop. Explore. The Comic World Awaits You!</h4>
+                            <form action="">
+                                <input type="email" placeholder="Enter Your Email" name="email" required />
+                                <button type="submit">Subscribe</button>
+                            </form>
+                            <div class="social_box">
+                                <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                <a href="https://www.linkedin.com/uas/login-submit"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer_section">
+        <div class="container">
+            <p>
+                © <span id="displayYear"></span> All Rights Reserved By
+                <a href="https://html.design/">Comic Bro'Z</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="{% static 'edgecut/js/custom.js' %}"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({ duration: 1000, once: true });
+
+        // Navbar Active State
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.custom_nav-container .navbar-nav .nav-item .nav-link');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    // Remove .active from all nav items
+                    document.querySelectorAll('.custom_nav-container .navbar-nav .nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Add .active to the parent nav-item of the clicked link
+                    this.parentElement.classList.add('active');
+                });
+            });
+        });
+
+        // Set Footer Year
+        document.getElementById('displayYear').textContent = new Date().getFullYear();
+
+        // Dropdown
+        $(document).ready(function () {
+            $('#profileDropdown').dropdown();
+        });
+
+        // Theme Switcher
+        const savedTheme = localStorage.getItem('theme') || 'ironman';
+        applyTheme(savedTheme);
+
+        function applyTheme(theme) {
+            const body = document.body;
+            const buttons = document.querySelectorAll('.btn, .nav_search-btn');
+            const links = document.querySelectorAll('.nav-link, .price_box a, .detail-box a, .info_links_menu a');
+            const headings = document.querySelectorAll('.heading_container h2, .navbar-brand span');
+
+            if (theme === 'ironman') {
+                body.style.background = '#1a1a2e';
+                buttons.forEach(btn => {
+                    btn.style.background = '#ffda79';
+                    btn.style.color = '#2a2a3b';
+                    btn.style.border = '2px solid #ff4d6d';
+                });
+                links.forEach(link => {
+                    link.style.color = link.parentElement.classList.contains('active') ? '#ff4d6d' : '#fff';
+                    link.addEventListener('mouseover', () => link.style.color = '#ff4d6d');
+                    link.addEventListener('mouseout', () => link.style.color = link.parentElement.classList.contains('active') ? '#ff4d6d' : '#fff');
+                });
+                headings.forEach(h => {
+                    h.style.color = '#ffda79';
+                    h.style.textShadow = '2px 2px #ff4d6d';
+                });
+            } else if (theme === 'spiderman') {
+                body.style.background = '#001f3f';
+                buttons.forEach(btn => {
+                    btn.style.background = '#00b7eb';
+                    btn.style.color = '#fff';
+                    btn.style.border = '2px solid #ff3333';
+                });
+                links.forEach(link => {
+                    link.style.color = link.parentElement.classList.contains('active') ? '#ff3333' : '#fff';
+                    link.addEventListener('mouseover', () => link.style.color = '#ff3333');
+                    link.addEventListener('mouseout', () => link.style.color = link.parentElement.classList.contains('active') ? '#ff3333' : '#fff');
+                });
+                headings.forEach(h => {
+                    h.style.color = '#00b7eb';
+                    h.style.textShadow = '2px 2px #ff3333';
+                });
+            } else if (theme === 'darkknight') {
+                body.style.background = '#111111';
+                buttons.forEach(btn => {
+                    btn.style.background = '#cccccc';
+                    btn.style.color = '#111111';
+                    btn.style.border = '2px solid #f1c232';
+                });
+                links.forEach(link => {
+                    link.style.color = link.parentElement.classList.contains('active') ? '#f1c232' : '#ccc';
+                    link.addEventListener('mouseover', () => link.style.color = '#f1c232');
+                    link.addEventListener('mouseout', () => link.style.color = link.parentElement.classList.contains('active') ? '#f1c232' : '#ccc');
+                });
+                headings.forEach(h => {
+                    h.style.color = '#cccccc';
+                    h.style.textShadow = '2px 2px #f1c232';
+                });
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

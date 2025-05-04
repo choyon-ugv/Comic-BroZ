@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Home{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
+  <title>Comic Bro'z - Contact Us</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'edgecut/css/bootstrap.css' %}" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
+  <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
+</head>
+
+<body class="sub_page">
+  <section class="contact_section layout_padding long_section">
+    <div class="container">
+      <div class="heading_container">
+        <h2>Contact Us</h2>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form_container">
+            <form action="">
+              <div><input type="text" placeholder="Your Name" /></div>
+              <div><input type="text" placeholder="Phone Number" /></div>
+              <div><input type="email" placeholder="Email" /></div>
+              <div><input type="text" class="message-box" placeholder="Message" /></div>
+              <div class="btn_box">
+                <button>SEND</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="map_container">
+            <div class="map">
+              <img src="https://assets.dochipo.com/editor/animations/contact-us/f38f563a-53fc-4527-a085-eeb2dba0c84f.gif" alt="Animated Map" style="width:100%; height:auto;">
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
+{% endblock %}

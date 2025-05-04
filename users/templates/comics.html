@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Comics{% endblock %}
+
+{% block body_class %}sub_page{% endblock %}
+
+{% block content %}
+<section class="furniture_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Our Comics</h2>
+            <p>Discover our amazing collection of comics</p>
+        </div>
+        <div class="row">
+            {% for comic in comics %}
+            <div class="col-md-6 col-lg-4">
+                <div class="box" data-aos="zoom-in">
+                    <div class="img-box">
+                        {% if comic.image %}
+                        <img src="{{ comic.image.url }}" alt="{{ comic.title|default:'Comic' }}">
+                        {% else %}
+                        <img src="{% static 'edgecut/images/default.png' %}" alt="{{ comic.title|default:'Comic' }}">
+                        {% endif %}
+                    </div>
+                    <div class="detail-box">
+                        <h5>{{ comic.title|default:"Untitled Comic" }}</h5>
+                        <div class="price_box">
+                            <h6 class="price_heading"><span>$</span> {{ comic.price|default:"0.00" }}</h6>
+                            {% if comic.id or comic.pk %}
+                            <a href="{% url 'comic_detail' comic.id|default:comic.pk %}">Buy Now</a>
+                            {% else %}
+                            <a href="{% url 'comics' %}">View Comics</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p>No comics available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

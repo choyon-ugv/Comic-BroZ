@@ -1,0 +1,134 @@
+{% extends 'custom_base.html' %}
+{% load static %}
+
+{% block title %}
+Profile Settings | Comic Bro'Z
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Display success/error messages -->
+  {% if messages %}
+  <div class="mb-3">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %} alert-dismissible"
+      role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <form id="formAccountSettings" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h5 class="card-header">Admin Profile Details</h5>
+        <!-- Account -->
+        <div class="card-body">
+          <div class="d-flex align-items-start align-items-sm-center gap-4">
+            {% if user.profile.profile_image %}
+            <img src="{{ user.profile.profile_image.url }}" alt="user-avatar" class="d-block rounded" height="100"
+              width="100" id="uploadedAvatar" />
+            {% else %}
+            <img src="{% static 'assets/img/avatars/1.png' %}" alt="user-avatar" class="d-block rounded" height="100"
+              width="100" id="uploadedAvatar" />
+            {% endif %}
+            <div class="button-wrapper">
+              <label for="profile_image" class="btn btn-primary me-2 mb-4" tabindex="0">
+                <span class="d-none d-sm-block">Upload new photo</span>
+                <i class="bx bx-upload d-block d-sm-none"></i>
+                <input type="file" id="profile_image" name="profile_image" class="account-file-input" hidden
+                  accept="image/png, image/jpeg" />
+              </label>
+              <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
+                <i class="bx bx-reset d-block d-sm-none"></i>
+                <span class="d-none d-sm-block">Reset</span>
+              </button>
+              <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- User Fields -->
+          <div class="mb-3 col-md-6">
+            <label for="username" class="form-label">Username</label>
+            <input class="form-control" type="text" id="username" name="username" value="{{ user.username }}"
+              required />
+            {% if form.username.errors %}
+            <div class="text-danger">{{ form.username.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="email" class="form-label">E-mail</label>
+            <input class="form-control" type="email" id="email" name="email" value="{{ user.email }}" required />
+            {% if form.email.errors %}
+            <div class="text-danger">{{ form.email.errors }}</div>
+            {% endif %}
+          </div>
+          <!-- Profile Fields -->
+          <div class="mb-3 col-md-6">
+            <label for="id_favorite_quote" class="form-label">Favorite Quote</label>
+            {{ form.favorite_quote }}
+            {% if form.favorite_quote.errors %}
+            <div class="text-danger">{{ form.favorite_quote.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="id_bio" class="form-label">Bio</label>
+            {{ form.bio }}
+            {% if form.bio.errors %}
+            <div class="text-danger">{{ form.bio.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="id_level" class="form-label">Level</label>
+            {{ form.level }}
+            {% if form.level.errors %}
+            <div class="text-danger">{{ form.level.errors }}</div>
+            {% endif %}
+          </div>
+          <div class="mb-3 col-md-6">
+            <label for="id_progress" class="form-label">Progress (%)</label>
+            {{ form.progress }}
+            {% if form.progress.errors %}
+            <div class="text-danger">{{ form.progress.errors }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mt-2">
+          <button type="submit" class="btn btn-primary me-2">Save changes</button>
+          <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <!-- /Account -->
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js/pages-account-settings-account.js' %}"></script>
+<script>
+  // JavaScript to preview uploaded image
+  document.getElementById('id_profile_image').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById('uploadedAvatar').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Reset image to default
+  document.querySelector('.account-image-reset').addEventListener('click', function () {
+    document.getElementById('uploadedAvatar').src = "{% if user.profile.profile_image %}{{ user.profile.profile_image.url }}{% else %}{% static 'assets/img/avatars/1.png' %}{% endif %}";
+    document.getElementById('id_profile_image').value = '';
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Blog{% endblock %}
+
+{% block body_class %}sub_page{% endblock %}
+
+{% block content %}
+<section class="blog_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Latest Blog</h2>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="text-right mb-4">
+            <a href="{% url 'create_blog' %}" class="btn btn-primary" style="background: #ffda79; color: #2a2a3b; border: 2px solid #ff4d6d; font-family: 'Bangers', cursive; transition: transform 0.3s, background 0.3s;">
+                Write a Blog
+            </a>
+        </div>
+        {% endif %}
+        <div class="row">
+            {% for blog in blogs %}
+            <div class="col-md-6 col-lg-4 mx-auto">
+                <div class="box" data-aos="zoom-in">
+                    <div class="img-box">
+                        {% if blog.image %}
+                        <img src="{{ blog.image.url }}" alt="{{ blog.title|default:'Blog' }}">
+                        {% else %}
+                        <img src="{% static 'edgecut/images/default-blog.jpg' %}" alt="{{ blog.title|default:'Blog' }}">
+                        {% endif %}
+                    </div>
+                    <div class="detail-box">
+                        <h5>{{ blog.title|default:"Untitled Blog" }}</h5>
+                        <p>{{ blog.content|truncatewords:20|default:"No content available." }}</p>
+                        <a href="{% url 'blog_detail' blog.id|default:blog.pk %}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p>No blogs available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
