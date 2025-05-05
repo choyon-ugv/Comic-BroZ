@@ -31,7 +31,12 @@ SECRET_KEY = 'django-insecure-vf)j9oaohd23guc)7yl3#krpjtcs__ne#16d59jm(z^*qw7lw4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://comic-broz.onrender.com',
+]
+
+
+ALLOWED_HOSTS = ['comic-broz.onrender.com,']
 
 
 # Application definition
