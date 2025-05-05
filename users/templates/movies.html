@@ -1,341 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bro'z Movie Blog - Iron Man Theme</title>
+{% extends 'base.html' %}
+{% load static %}
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block title %}Bro'z Movie Blog{% endblock %}
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+{% block extra_css %}
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            background-color: #121212;
-            color: #fff;
-            font-family: 'Roboto', sans-serif;
-        }
+<style>
+    :root {
+        --primary-bg: #141414;
+        --card-bg: #1e1e1e;
+        --accent-color: #e50914;
+        --text-color: #ffffff;
+        --text-muted: #b3b3b3;
+    }
 
-        .transparent-navbar {
-            background-color: rgba(0, 0, 0, 0.3); /* Transparent black */
-            backdrop-filter: blur(10px); /* Frosted glass effect */
-            padding: 12px 0;
-            transition: background-color 0.3s ease;
-            z-index: 999;
-          }
-          
-          .navbar-brand {
-            font-weight: bold;
-            font-size: 1.6rem;
-            color: #f1c40f;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-          }
-          
-          .navbar-brand img {
-            border-radius: 50%;
-          }
-          
-          .navbar-nav .nav-link {
-            color: #fff;
-            font-weight: 500;
-            margin-right: 15px;
-            transition: color 0.3s ease;
-          }
-          
-          .navbar-nav .nav-link:hover,
-          .navbar-nav .nav-link.active {
-            color: #f44336; /* Iron Man Red */
-          }
-          
-          .btn-outline-warning {
-            border-radius: 25px;
-            font-weight: bold;
-            transition: 0.3s;
-          }
-          
-          .btn-outline-warning:hover {
-            background-color: #f44336;
-            color: #fff;
-            border-color: #f44336;
-          }
-          
-       
+    body {
+        font-family: 'Outfit', sans-serif;
+        background-color: var(--primary-bg);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+    }
 
-        <!-- .hero {
-            height: 400px;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden; /* Ensure the pseudo-element doesn't overflow */
-        }
+    .hero {
+        height: 60vh;
+        background: linear-gradient(to right, rgba(20, 20, 20, 0.9), rgba(20, 20, 20, 0.5)),
+                    url('{% static "edgecut/images/hhhhhhhhhhh.jpg" %}') no-repeat center center/cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        color: var(--text-color);
+    }
 
-        /* Pseudo-element for background image with decreased opacity */
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('/static/edgecut/images/back-site.jpg') no-repeat center center;
-            opacity: 0.1; /* Decreased opacity to make the image more transparent */
-            z-index: 1;
-        }
+    .hero h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
 
+    .hero p {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: var(--text-muted);
+    }
 
-        /* Ensure the text content is above the pseudo-element */
-        .hero > div {
-            position: relative;
-            z-index: 2;
-        } -->
+    .movie-container {
+        padding: 3rem 1rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
 
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+    }
 
-        .hero h1 {
-            font-size: 4rem;
-            font-weight: 700;
-        }
-
-        .container {
-            margin-top: 10px;
-            padding: 0 25px;
-            max-width: 1600px;
-        }
-
-        .movie-card {
-        background-color: #0c0202;
+    .movie-card {
+        background: var(--card-bg);
         border-radius: 10px;
         overflow: hidden;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        padding: 0; /* Remove padding to allow the image to fill the entire card */
-        margin: 0;  /* Remove margin to avoid space between the image and card edges */
+    }
+
+    .movie-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .movie-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .movie-details {
+        padding: 1rem;
+    }
+
+    .movie-details h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .movie-details p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .watch-btn {
+        display: block;
+        margin-top: 1rem;
+        padding: 10px;
+        background-color: var(--accent-color);
+        color: var(--text-color);
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+
+    .watch-btn:hover {
+        background-color: #ff1c1c;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
         }
 
         .movie-card img {
-            width: 100%;
-            height: 220%; /* Ensure the image fills the full height of the container */
-            object-fit: cover; /* Cover the space with the image without distortion */
+            height: 220px;
         }
+    }
+</style>
+{% endblock %}
 
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" data-aos="fade-up">
+    <div>
+        <h1>Bro'z Movie Blog</h1>
+        <p>Explore epic movies, classics, and hidden gems curated just for you.</p>
+    </div>
+</section>
 
-        .movie-card-body {
-            padding: 15px;
-        }
-
-        .movie-card-body h5 {
-            font-size: 1.5rem;
-            color: #f7f7f7;
-            font-weight: 600;
-        }
-
-        .movie-card-body p {
-            color: #bbb;
-            font-size: .7rem;
-        }
-
-        .movie-card-body .btn {
-            background-color: #a10000; /* Iron Man red */
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 8px;
-            font-size: 1rem;
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-
-        .movie-card-body .btn:hover {
-            background-color: #ff4c4c; /* Hover effect with Iron Man red */
-        }
-
-        .row {
-            margin-top: 40px;
-        }
-
-        .movie-card:hover {
-            transform: scale(1.05);
-        }
-
-        footer {
-            background-color: #1d1d1d;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-
-        footer p {
-            font-size: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .movie-card-body h5 {
-                font-size: 1.2rem;
-            }
-
-            .movie-card-body p {
-                font-size: 0.9rem;
-            }
-        }
-
-        .quote_btn-container {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-        .dropdown-toggle {
-          color: #333;
-          font-size: 1rem;
-          transition: color 0.3s;
-          cursor: pointer;
-        }
-        .dropdown-toggle:hover {
-          color: #007bff;
-        }
-        .dropdown-menu {
-          border-radius: 10px;
-          border: none;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          min-width: 200px;
-          z-index: 1000;
-        }
-        .dropdown-item {
-          padding: 0.5rem 1rem;
-          font-size: 0.95rem;
-        }
-        .dropdown-item:hover {
-          background-color: #f8f9fa;
-        }
-        .form-inline .nav_search-btn {
-          background: transparent;
-          border: none;
-          color: #333;
-          font-size: 1.2rem;
-        }
-        .form-inline .nav_search-btn:hover {
-          color: #007bff;
-        }
-      </style>
-</head>
-<body>
-
-   
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Bro'z Movie Blog</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'movies' %}">Movies</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Reviews</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                </ul>
-                <div class="quote_btn-container">
-                    {% if user.is_authenticated %}
-                      <div class="dropdown">
-                        <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="profileDropdown">
-                          <div class="dropdown-item d-flex align-items-center">
-                            {% if user.profile_image %}
-                              <img src="{{ user.profile_image.url }}" alt="Profile" class="rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">
-                            {% else %}
-                              <i class="fa fa-user-circle fa-2x mr-2" aria-hidden="true"></i>
-                            {% endif %}
-                            <div>
-                              <strong>{{ user.username }}</strong>
-                              <br>
-                              <small>{{ user.email }}</small>
-                            </div>
-                          </div>
-                          <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
-                          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-                        </div>
-                      </div>
-                    {% else %}
-                      <a href="{% url 'login_user' %}">
-                        <span>Login</span>
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                      </a>
-                    {% endif %}
-                    <form class="form-inline">
-                      <button class="btn my-2 my-sm-0 nav_search-btn" type="submit">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </nav>
-            </header>
+<!-- Movie Cards -->
+<div class="movie-container">
+    <div class="movie-grid">
+        {% for movie in movies %}
+        <div class="movie-card" data-aos="fade-up">
+            <img src="{% if movie.image %}{{ movie.image.url }}{% else %}https://via.placeholder.com/300x200.png?text=No+Image{% endif %}" alt="{{ movie.title }}">
+            <div class="movie-details">
+                <h5>{{ movie.title }}</h5>
+                <p><strong>Release:</strong> {{ movie.release_date }}</p>
+                <a href="{{ movie.watch_link }}" class="watch-btn" target="_blank">Watch Now</a>
             </div>
         </div>
-    </nav>
-      
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div>
-            <h1>Welcome to the Bro'z Movie Blog</h1>
-            <p>Discover the best movies and latest releases!</p>
-        </div>
-    </section>
-
-    <!-- Movie Cards Section -->
-    <div class="container">
-        <div class="row">
-            {% for movie in movies %}
-                <div class="col-md-2 mb-4">
-                    <div class="movie-card">
-                        <img src="{% if movie.image %}{{ movie.image.url }}{% else %}https://via.placeholder.com/300x200.png?text=No+Image{% endif %}" alt="{{ movie.title }}">
-                        <div class="movie-card-body">
-                            <h5>{{ movie.title }}</h5>
-                            <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
-                            <a href="{{ movie.watch_link }}" class="btn">Watch Now</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+        {% endfor %}
     </div>
+</div>
+{% endblock %}
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Movie Blog | Designed by Choyon Bro</p>
-    </footer>
-
-    <!-- Bootstrap JS and Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <!-- Fallback script for dropdown -->
-  <script>
-    $(document).ready(function () {
-      // Ensure dropdown works with Bootstrap 4
-      $('#profileDropdown').dropdown();
-    });
-  </script>
-</body>
-</html>
+{% block extra_js %}
+<!-- AOS Animations -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 800 });
+</script>
+{% endblock %}

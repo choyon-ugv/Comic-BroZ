@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from .forms import BlogForm, ComicForm, CommentForm
 from users.forms import PasswordChangeForm, ProfileForm, RegisterForm
 from users.models import CharacterCard
+from payments.models import Order
 
 
 def admin_login(request):
@@ -385,12 +386,14 @@ def admin_dashboard(request):
     total_movies = Movie.objects.count()
     total_blog = Blog.objects.count()
     total_comic = Comic.objects.count()
+    total_order = Order.objects.count()
     
     context ={
         'total_users': total_users,
         'total_movies': total_movies,
         'total_blog': total_blog,
-        'total_comic': total_comic, 
+        'total_comic': total_comic,
+        'total_order': total_order,
     }
     return render(request, 'custom_admin/admin_index.html', context)
 
