@@ -29,7 +29,7 @@
     <div class="halftone-overlay"></div>
 
     <!-- Header Section -->
-    <header class="header_section long_section px-0">
+    <header class="header_section px-0">
         <nav class="navbar navbar-expand-lg custom_nav-container">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <span>Comic Bro'Z</span>
@@ -44,7 +44,7 @@
                         <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                        <li class="nav-item {% if request.resolver_match.url_name == 'card' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">
@@ -109,7 +109,7 @@
     {% endblock %}
 
     <!-- Info Section -->
-    <section class="info_section long_section">
+    <section class="info_section">
         <div class="container">
             <div class="info_top">
                 <div class="row">

@@ -1,14 +1,17 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
     <title>Comic Bro'Z - {{ comic.title|default:'Untitled Comic' }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
@@ -21,6 +24,7 @@
             background: #1a1a2e;
             overflow-x: hidden;
         }
+
         .parallax-bg {
             background: url('{% static "edgecut/images/comic-bg.jpg" %}') no-repeat center center fixed;
             background-size: cover;
@@ -32,6 +36,7 @@
             z-index: -1;
             opacity: 0.3;
         }
+
         .halftone-overlay {
             position: absolute;
             top: 0;
@@ -42,10 +47,12 @@
             opacity: 0.1;
             z-index: -1;
         }
+
         .hero_area {
             position: relative;
             z-index: 1;
         }
+
         .comic-container {
             max-width: 1200px;
             margin: 60px auto;
@@ -55,6 +62,7 @@
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
         }
+
         .comic-header {
             background: linear-gradient(45deg, #ff4d6d, #ffda79);
             border-radius: 15px;
@@ -62,6 +70,7 @@
             margin-bottom: 30px;
             text-align: center;
         }
+
         .comic-header h2 {
             font-family: 'Bangers', cursive;
             font-size: 3rem;
@@ -69,24 +78,29 @@
             text-shadow: 2px 2px #ff4d6d;
             margin: 0;
         }
+
         .comic-image img {
             width: 100%;
             border-radius: 10px;
             border: 3px solid #ffda79;
             transition: transform 0.3s;
         }
+
         .comic-image img:hover {
             transform: scale(1.05);
         }
+
         .comic-details {
             background: #383850;
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
         }
+
         .comic-details p {
             margin: 10px 0;
         }
+
         .short-desc {
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -94,6 +108,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .action-btn {
             display: inline-block;
             margin: 10px 5px;
@@ -106,18 +121,22 @@
             font-size: 1.2rem;
             transition: transform 0.3s, background 0.3s;
         }
+
         .action-btn:hover {
             background: #ffda79;
             color: #2a2a3b;
             transform: scale(1.1);
         }
+
         .action-btn i {
             margin-right: 8px;
         }
+
         .disabled-btn {
             background: #6c757d;
             cursor: not-allowed;
         }
+
         .read-more-btn {
             background: none;
             border: none;
@@ -127,35 +146,41 @@
             cursor: pointer;
             padding: 0;
         }
+
         .read-more-btn:hover {
             color: #fff;
         }
+
         .alert {
             margin-bottom: 20px;
             border-radius: 8px;
         }
     </style>
 </head>
+
 <body>
     <div class="parallax-bg"></div>
     <div class="halftone-overlay"></div>
     <div class="hero_area">
-        <header class="header_section long_section px-0">
+        <header class="header_section px-0">
             <nav class="navbar navbar-expand-lg custom_nav-container">
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <span>Comic Bro'Z</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span class=""></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                                <a class="nav-link" href="{% url 'home' %}">Home <span
+                                        class="sr-only">(current)</span></a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'about' %}">About</a>
+                            <li class="nav-item {% if request.resolver_match.url_name == 'card' %}active{% endif %}">
+                                <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'movies' %}">Movies</a>
@@ -174,13 +199,16 @@
                     <div class="quote_btn-container">
                         {% if user.is_authenticated %}
                         <div class="dropdown">
-                            <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
                                 <li class="dropdown-item d-flex align-items-center">
                                     {% if user.profile.profile_image %}
-                                    <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <img src="{{ user.profile.profile_image.url }}" alt="Profile"
+                                        class="rounded-circle me-2"
+                                        style="width: 40px; height: 40px; object-fit: cover;">
                                     {% else %}
                                     <i class="fa fa-user-circle fa-2x me-2" aria-hidden="true"></i>
                                     {% endif %}
@@ -190,7 +218,9 @@
                                         <small>{{ user.email }}</small>
                                     </div>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
                                 <li><a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
@@ -212,16 +242,6 @@
             </nav>
         </header>
         <div class="comic-container" data-aos="fade-up">
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
             <div class="comic-header" data-aos="zoom-in">
                 <h2>{{ comic.title|default:"Untitled Comic" }}</h2>
             </div>
@@ -250,24 +270,32 @@
                         {% if user.is_authenticated %}
                         <div class="action-buttons">
                             {% if user in comic.purchased_by.all %}
-                            <a href="{% url 'comic_read' comic.pk %}" class="action-btn"><i class="fa fa-book"></i> Read Comic</a>
+                            <a href="{% url 'comic_read' comic.pk %}" class="action-btn"><i class="fa fa-book"></i> Read
+                                Comic</a>
                             {% else %}
-                            <button id="buy-button" class="action-btn" data-comic-id="{{ comic.pk }}"><i class="fa fa-shopping-cart"></i> Purchase Comic</button>
+                            <button id="buy-button" class="action-btn" data-comic-id="{{ comic.pk }}"><i
+                                    class="fa fa-shopping-cart"></i> Purchase Comic</button>
                             {% endif %}
-                            <a href="{% url 'comic_favorite' comic.pk %}" class="action-btn favorite-btn" data-comic-id="{{ comic.pk }}" data-is-favorited="{% if user in comic.favorited_by.all %}true{% else %}false{% endif %}">
-                                <i class="fa {% if user in comic.favorited_by.all %}fa-heart-broken{% else %}fa-heart{% endif %}"></i>
-                                <span>{% if user in comic.favorited_by.all %}Remove from Favorites{% else %}Add to Favorites{% endif %}</span>
+                            <a href="{% url 'comic_favorite' comic.pk %}" class="action-btn favorite-btn"
+                                data-comic-id="{{ comic.pk }}"
+                                data-is-favorited="{% if user in comic.favorited_by.all %}true{% else %}false{% endif %}">
+                                <i
+                                    class="fa {% if user in comic.favorited_by.all %}fa-heart-broken{% else %}fa-heart{% endif %}"></i>
+                                <span>{% if user in comic.favorited_by.all %}Remove from Favorites{% else %}Add to
+                                    Favorites{% endif %}</span>
                             </a>
                         </div>
                         {% else %}
-                        <p>Please <a href="{% url 'login' %}?next={{ request.path }}" class="read-more-btn">log in</a> to purchase, favorite, or read this comic.</p>
+                        <p>Please <a href="{% url 'login' %}?next={{ request.path }}" class="read-more-btn">log in</a>
+                            to purchase, favorite, or read this comic.</p>
                         {% endif %}
-                        <a href="{% url 'comics' %}" class="action-btn"><i class="fa fa-arrow-left"></i> Back to Comics</a>
+                        <a href="{% url 'comics' %}" class="action-btn"><i class="fa fa-arrow-left"></i> Back to
+                            Comics</a>
                     </div>
                 </div>
             </div>
         </div>
-        <section class="info_section long_section">
+        <section class="info_section">
             <div class="container">
                 <div class="info_top">
                     <div class="row">
@@ -287,12 +315,18 @@
                             <div class="info_post">
                                 <h5>INSTAGRAM FEEDS</h5>
                                 <div class="post_box">
-                                    <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}" alt="Instagram Post"></div>
-                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}" alt="Instagram Post"></div>
-                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}" alt="Instagram Post"></div>
-                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}" alt="Instagram Post"></div>
-                                    <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}" alt="Instagram Post"></div>
-                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}" alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
+                                            alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
+                                            alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
+                                            alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
+                                            alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
+                                            alt="Instagram Post"></div>
+                                    <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
+                                            alt="Instagram Post"></div>
                                 </div>
                             </div>
                         </div>
@@ -317,11 +351,14 @@
         </section>
         <footer class="footer_section">
             <div class="container">
-                <p>© <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Comic Bro'Z</a></p>
+                <p>© <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Comic
+                        Bro'Z</a></p>
             </div>
         </footer>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script src="{% static 'edgecut/js/slick.min.js' %}"></script>
         <script src="{% static 'edgecut/js/custom.js' %}"></script>
@@ -412,5 +449,6 @@
                 });
             }
         </script>
-    </body>
+</body>
+
 </html>

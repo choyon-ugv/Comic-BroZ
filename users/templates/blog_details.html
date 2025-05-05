@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -23,6 +24,7 @@
       margin-bottom: 20px;
       color: #fff;
     }
+
     .speech-bubble::after {
       content: '';
       position: absolute;
@@ -32,6 +34,7 @@
       border-style: solid;
       border-color: #383850 transparent transparent transparent;
     }
+
     .blog_detail_box {
       background: #383850;
       border: 3px solid #ff4d6d;
@@ -39,6 +42,7 @@
       padding: 25px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+
     .comments_box {
       background: #383850;
       border: 3px solid #ff4d6d;
@@ -46,6 +50,7 @@
       padding: 25px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+
     .comment-item {
       background: #2a2a3b;
       border: 2px solid #ffda79;
@@ -53,6 +58,7 @@
       padding: 15px;
       margin-bottom: 20px;
     }
+
     .sidebar {
       background: #383850;
       border: 3px solid #ff4d6d;
@@ -60,29 +66,41 @@
       padding: 25px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
+
     .modal-content {
       background: #383850;
       border: 3px solid #ff4d6d;
       border-radius: 8px;
       color: #fff;
     }
-    .modal-header, .modal-footer {
+
+    .modal-header,
+    .modal-footer {
       border-color: #ffda79;
     }
-    .btn-primary, .btn-danger, .btn-outline-danger, .btn-outline-primary {
+
+    .btn-primary,
+    .btn-danger,
+    .btn-outline-danger,
+    .btn-outline-primary {
       background: #ffda79;
       color: #2a2a3b;
       border: 2px solid #ff4d6d;
       font-family: "Bangers", cursive;
       transition: transform 0.3s, background 0.3s;
     }
-    .btn-primary:hover, .btn-danger:hover, .btn-outline-danger:hover, .btn-outline-primary:hover {
+
+    .btn-primary:hover,
+    .btn-danger:hover,
+    .btn-outline-danger:hover,
+    .btn-outline-primary:hover {
       background: #fff;
       color: #ff4d6d;
       transform: scale(1.1);
     }
   </style>
 </head>
+
 <body class="sub_page">
   <!-- Parallax and Halftone -->
   <div class="parallax-bg"></div>
@@ -90,7 +108,7 @@
 
   <div class="hero_area">
     <!-- Header Section -->
-    <header class="header_section long_section px-0">
+    <header class="header_section px-0">
       <nav class="navbar navbar-expand-lg custom_nav-container">
         <a class="navbar-brand" href="{% url 'home' %}">
           <span>Comic Bro'Z</span>
@@ -105,8 +123,8 @@
               <li class="nav-item active">
                 <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
+              <li class="nav-item {% if request.resolver_match.url_name == 'card' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'movies' %}">Movies</a>
@@ -166,21 +184,6 @@
     </header>
   </div>
 
-  <!-- Messages -->
-  {% if messages %}
-  <div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert"
-         style="background: #383850; border: 2px solid #ff4d6d; color: #fff;">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">×</span>
-      </button>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
   <section class="blog_details_section layout_padding">
     <div class="container">
       <div class="row">
@@ -190,14 +193,14 @@
               {% if blog.image %}
               <img src="{{ blog.image.url }}" class="img-fluid rounded mb-4" alt="{{ blog.title }}">
               {% endif %}
-              <h1 class="card-title mb-3" style="font-family: 'Bangers', cursive; color: #ffda79; text-shadow: 2px 2px #ff4d6d;">{{ blog.title }}</h1>
+              <h1 class="card-title mb-3"
+                style="font-family: 'Bangers', cursive; color: #ffda79; text-shadow: 2px 2px #ff4d6d;">{{ blog.title }}
+              </h1>
               <div class="blog-meta mb-4" style="color: #ccc;">
                 <i class="fa fa-heart"></i> {{ likes_count }} Likes
               </div>
               <div class="speech-bubble">
                 <p><i class="fa fa-user mr-2"></i> By {{ blog.author.username|default:"Anonymous" }}</p>
-                <p><i class="fa fa-calendar mr-2"></i> Created: {{ blog.created_at|date:"F d, Y H:i" }}</p>
-                <p><i class="fa fa-clock-o mr-2"></i> Updated: {{ blog.updated_at|date:"F d, Y H:i" }}</p>
               </div>
               <div class="blog-content" style="color: #ccc;">
                 {{ blog.content|linebreaks }}
@@ -220,7 +223,8 @@
 
           <div class="comments_box mt-4">
             <div class="card-body">
-              <h3 class="card-title mb-4" style="font-family: 'Bangers', cursive; color: #ffda79;">{{ comments.count }} Comments</h3>
+              <h3 class="card-title mb-4" style="font-family: 'Bangers', cursive; color: #ffda79;">{{ comments.count }}
+                Comments</h3>
               <form method="POST" action="{% url 'add_comment' blog.id %}" class="mb-5 comment-form">
                 {% csrf_token %}
                 <div class="form-group mb-3">
@@ -284,7 +288,8 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="editCommentModalLabel" style="font-family: 'Bangers', cursive; color: #ffda79;">Edit Comment</h5>
+              <h5 class="modal-title" id="editCommentModalLabel"
+                style="font-family: 'Bangers', cursive; color: #ffda79;">Edit Comment</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" style="color: #ffda79;">×</span>
               </button>
@@ -299,7 +304,8 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                  style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save</button>
               </div>
             </form>
@@ -313,7 +319,8 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="deleteCommentModalLabel" style="font-family: 'Bangers', cursive; color: #ffda79;">Delete Comment</h5>
+              <h5 class="modal-title" id="deleteCommentModalLabel"
+                style="font-family: 'Bangers', cursive; color: #ffda79;">Delete Comment</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true" style="color: #ffda79;">×</span>
               </button>
@@ -325,7 +332,8 @@
               {% csrf_token %}
               <input type="hidden" name="comment_id" id="deleteCommentId">
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                  style="background: #2a2a3b; color: #fff; border: 2px solid #ff4d6d;">Cancel</button>
                 <button type="submit" class="btn btn-danger">Delete</button>
               </div>
             </form>
@@ -334,7 +342,7 @@
       </div>
   </section>
 
-  <section class="info_section long_section">
+  <section class="info_section">
     <div class="container">
       <div class="info_top">
         <div class="row">
@@ -354,19 +362,17 @@
             <div class="info_post">
               <h5>INSTAGRAM FEEDS</h5>
               <div class="post_box">
-                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
-                        alt="Instagram Post"></div>
-                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
-                        alt="Instagram Post"></div>
-                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
-                        alt="Instagram Post"></div>
-                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
-                        alt="Instagram Post"></div>
-                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
-                        alt="Instagram Post"></div>
-                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
-                        alt="Instagram Post"></div>
-            </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}" alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}" alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}" alt="Instagram Post">
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-4">
@@ -398,7 +404,8 @@
   <script src="{% static 'edgecut/js/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'edgecut/js/bootstrap.js' %}"></script>
   <script src="{% static 'edgecut/js/custom.js' %}"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
   <script>
     $(document).ready(function () {
       // Handle Like Form Submission
@@ -490,15 +497,16 @@
         $('#editCommentId').val(commentId);
         $('#editCommentContent').val(commentContent);
         $('#editCommentForm').attr('action', '/blogs/' + {{ blog.id }} + '/comments/' + commentId + '/edit/');
-      });
+    });
 
-      // Delete Comment Modal
-      $(document).on('click', '.delete-comment-btn', function () {
-        var commentId = $(this).data('comment-id');
-        $('#deleteCommentId').val(commentId);
-        $('#deleteCommentForm').attr('action', '/blogs/' + {{ blog.id }} + '/comments/' + commentId + '/delete/');
+    // Delete Comment Modal
+    $(document).on('click', '.delete-comment-btn', function () {
+      var commentId = $(this).data('comment-id');
+      $('#deleteCommentId').val(commentId);
+      $('#deleteCommentForm').attr('action', '/blogs/' + {{ blog.id }} + '/comments/' + commentId + '/delete/');
       });
     });
   </script>
 </body>
+
 </html>
