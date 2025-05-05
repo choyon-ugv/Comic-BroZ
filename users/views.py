@@ -221,6 +221,7 @@ def comic_read(request, pk):
             return JsonResponse({'success': True, 'message': f"Reading {comic.title}."})
     return redirect('comic_detail', pk=pk)
 
+
 @login_required
 def profile_view(request):
     try:

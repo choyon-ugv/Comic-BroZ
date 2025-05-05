@@ -9,7 +9,8 @@
   <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
   <title>Comic Bro'Z - {{ blog.title }}</title>
   <link rel="stylesheet" type="text/css" href="{% static 'edgecut/css/bootstrap.css' %}" />
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet">
   <link href="{% static 'edgecut/css/font-awesome.min.css' %}" rel="stylesheet" />
   <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
   <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
@@ -21,13 +22,13 @@
       --darker: #1e1e2d;
       --light: #f8f9fa;
     }
-    
+
     body {
       background-color: var(--darker);
       color: var(--light);
       font-family: 'Poppins', sans-serif;
     }
-    
+
     /* Header Styles */
     .navbar-brand span {
       font-family: 'Bangers', cursive;
@@ -35,19 +36,19 @@
       color: var(--secondary);
       text-shadow: 2px 2px var(--primary);
     }
-    
+
     /* Blog Content Styles */
     .blog-detail-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem 1rem;
     }
-    
+
     .blog-header {
       position: relative;
       margin-bottom: 2rem;
     }
-    
+
     .blog-image {
       width: 100%;
       max-height: 500px;
@@ -56,7 +57,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       border: 3px solid var(--primary);
     }
-    
+
     .blog-title {
       font-family: 'Bangers', cursive;
       font-size: 2.5rem;
@@ -65,14 +66,14 @@
       text-shadow: 3px 3px var(--primary);
       line-height: 1.2;
     }
-    
+
     .blog-meta {
       display: flex;
       align-items: center;
       gap: 1.5rem;
       margin-bottom: 1.5rem;
     }
-    
+
     .author-info {
       display: flex;
       align-items: center;
@@ -82,7 +83,7 @@
       border-radius: 50px;
       border: 2px solid var(--primary);
     }
-    
+
     .author-avatar {
       width: 40px;
       height: 40px;
@@ -90,29 +91,29 @@
       object-fit: cover;
       border: 2px solid var(--secondary);
     }
-    
+
     .author-name {
       font-weight: 600;
       color: var(--secondary);
     }
-    
+
     .like-count {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-size: 1.1rem;
     }
-    
+
     .blog-content {
       font-size: 1.1rem;
       line-height: 1.8;
       padding: 1.5rem 0;
     }
-    
+
     .blog-content p {
       margin-bottom: 1.5rem;
     }
-    
+
     /* Like Button */
     .like-btn {
       background: transparent;
@@ -128,16 +129,16 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .like-btn:hover {
       background: var(--primary);
       transform: translateY(-2px);
     }
-    
+
     .like-btn.liked {
       background: var(--primary);
     }
-    
+
     /* Comments Section */
     .comments-section {
       margin-top: 3rem;
@@ -146,24 +147,24 @@
       padding: 2rem;
       border: 3px solid var(--primary);
     }
-    
+
     .comments-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
     }
-    
+
     .comments-title {
       font-family: 'Bangers', cursive;
       font-size: 1.8rem;
       color: var(--secondary);
     }
-    
+
     .comment-form {
       margin-bottom: 2rem;
     }
-    
+
     .comment-textarea {
       width: 100%;
       background: var(--darker);
@@ -176,7 +177,7 @@
       resize: vertical;
       margin-bottom: 1rem;
     }
-    
+
     .comment-submit {
       background: var(--primary);
       color: var(--dark);
@@ -188,34 +189,34 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    
+
     .comment-submit:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
     }
-    
+
     /* Comments List */
     .comments-list {
       max-height: 500px;
       overflow-y: auto;
       padding-right: 1rem;
     }
-    
+
     /* Custom Scrollbar */
     .comments-list::-webkit-scrollbar {
       width: 8px;
     }
-    
+
     .comments-list::-webkit-scrollbar-track {
       background: var(--darker);
       border-radius: 10px;
     }
-    
+
     .comments-list::-webkit-scrollbar-thumb {
       background: var(--primary);
       border-radius: 10px;
     }
-    
+
     .comment-item {
       background: var(--darker);
       border-radius: 8px;
@@ -223,20 +224,20 @@
       margin-bottom: 1.5rem;
       border-left: 4px solid var(--primary);
     }
-    
+
     .comment-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.8rem;
     }
-    
+
     .comment-user {
       display: flex;
       align-items: center;
       gap: 0.8rem;
     }
-    
+
     .comment-avatar {
       width: 40px;
       height: 40px;
@@ -244,27 +245,27 @@
       object-fit: cover;
       border: 2px solid var(--secondary);
     }
-    
+
     .comment-name {
       font-weight: 600;
       color: var(--secondary);
     }
-    
+
     .comment-date {
       font-size: 0.8rem;
       color: #aaa;
     }
-    
+
     .comment-content {
       line-height: 1.6;
       margin-bottom: 1rem;
     }
-    
+
     .comment-actions {
       display: flex;
       gap: 0.8rem;
     }
-    
+
     .comment-action-btn {
       background: transparent;
       border: 1px solid var(--primary);
@@ -275,11 +276,11 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    
+
     .comment-action-btn:hover {
       background: var(--primary);
     }
-    
+
     /* Sidebar */
     .sidebar {
       background: var(--dark);
@@ -288,7 +289,7 @@
       border: 3px solid var(--primary);
       height: fit-content;
     }
-    
+
     .sidebar-title {
       font-family: 'Bangers', cursive;
       font-size: 1.5rem;
@@ -297,67 +298,67 @@
       padding-bottom: 0.5rem;
       border-bottom: 2px solid var(--primary);
     }
-    
+
     .recent-post {
       margin-bottom: 1.2rem;
       padding-bottom: 1.2rem;
       border-bottom: 1px solid rgba(255, 77, 109, 0.3);
     }
-    
+
     .recent-post:last-child {
       border-bottom: none;
       margin-bottom: 0;
       padding-bottom: 0;
     }
-    
+
     .recent-post a {
       color: var(--light);
       text-decoration: none;
       transition: color 0.3s ease;
     }
-    
+
     .recent-post a:hover {
       color: var(--secondary);
     }
-    
+
     .recent-post-title {
       font-family: 'Bangers', cursive;
       font-size: 1.1rem;
       margin-bottom: 0.3rem;
     }
-    
+
     /* Modal Styles */
     .modal-content {
       background: var(--dark);
       border: 3px solid var(--primary);
       border-radius: 12px;
     }
-    
+
     .modal-header {
       border-bottom: 1px solid rgba(255, 77, 109, 0.3);
     }
-    
+
     .modal-title {
       font-family: 'Bangers', cursive;
       color: var(--secondary);
     }
-    
+
     .close {
       color: var(--secondary);
     }
-    
+
     /* Responsive Styles */
     @media (max-width: 768px) {
       .blog-title {
         font-size: 2rem;
       }
-      
+
       .blog-meta {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
       }
-      
+
       .comments-section {
         padding: 1.5rem;
       }
@@ -452,51 +453,52 @@
           <img src="{{ blog.image.url }}" class="blog-image" alt="{{ blog.title }}">
           {% endif %}
           <h1 class="blog-title">{{ blog.title }}</h1>
-          
+
           <div class="blog-meta">
             <div class="author-info">
               {% if blog.author.profile.profile_image %}
-              <img src="{{ blog.author.profile.profile_image.url }}" class="author-avatar" alt="{{ blog.author.username }}">
+              <img src="{{ blog.author.profile.profile_image.url }}" class="author-avatar"
+                alt="{{ blog.author.username }}">
               {% else %}
               <i class="fa fa-user-circle fa-2x" style="color: var(--secondary);"></i>
               {% endif %}
               <span class="author-name">By {{ blog.author.username|default:"Anonymous" }}</span>
             </div>
-            
+
             <div class="like-count">
               <i class="fa fa-heart"></i>
               <span id="likes-count">{{ likes_count }}</span> Likes
             </div>
           </div>
         </div>
-        
+
         <!-- Blog Content -->
         <div class="blog-content">
           {{ blog.content|linebreaks }}
         </div>
-        
+
         <!-- Like Button -->
         <form method="POST" action="{% url 'like_blog' blog.id %}" class="like-form">
           {% csrf_token %}
           <button type="submit" class="like-btn {% if user_liked %}liked{% endif %}" id="like-button">
             <i class="fa {% if user_liked %}fa-heart{% else %}fa-heart-o{% endif %}"></i>
             {% if user.is_authenticated %}
-              {% if user_liked %}Liked{% else %}Like{% endif %}
+            {% if user_liked %}Liked{% else %}Like{% endif %}
             {% else %}
-              Like
+            Like
             {% endif %}
           </button>
         </form>
-        
+
         <!-- Comments Section -->
         <div class="comments-section">
           <div class="comments-header">
             <h2 class="comments-title">
-              <i class="fa fa-comments"></i> 
+              <i class="fa fa-comments"></i>
               <span id="comments-count">{{ comments.count }}</span> Comments
             </h2>
           </div>
-          
+
           <!-- Comment Form -->
           {% if user.is_authenticated %}
           <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form">
@@ -509,7 +511,7 @@
             Please <a href="{% url 'login' %}">login</a> to post a comment.
           </div>
           {% endif %}
-          
+
           <!-- Comments List -->
           <div class="comments-list" id="comments-list">
             {% for comment in comments %}
@@ -517,15 +519,16 @@
               <div class="comment-header">
                 <div class="comment-user">
                   {% if comment.user.profile.profile_image %}
-                  <img src="{{ comment.user.profile.profile_image.url }}" class="comment-avatar" alt="{{ comment.user.username }}">
+                  <img src="{{ comment.user.profile.profile_image.url }}" class="comment-avatar"
+                    alt="{{ comment.user.username }}">
                   {% else %}
                   <i class="fa fa-user-circle fa-2x" style="color: var(--secondary);"></i>
                   {% endif %}
                   <span class="comment-name">
                     {% if comment.user %}
-                      {{ comment.user.username|default:comment.user.email }}
+                    {{ comment.user.username|default:comment.user.email }}
                     {% else %}
-                      Anonymous
+                    Anonymous
                     {% endif %}
                   </span>
                 </div>
@@ -534,9 +537,8 @@
               <div class="comment-content">{{ comment.content }}</div>
               {% if user.is_authenticated and comment.user == user %}
               <div class="comment-actions">
-                <button class="comment-action-btn edit-comment-btn" data-toggle="modal"
-                  data-target="#editCommentModal" data-comment-id="{{ comment.id }}"
-                  data-comment-content="{{ comment.content|escapejs }}">Edit</button>
+                <button class="comment-action-btn edit-comment-btn" data-toggle="modal" data-target="#editCommentModal"
+                  data-comment-id="{{ comment.id }}" data-comment-content="{{ comment.content|escapejs }}">Edit</button>
                 <button class="comment-action-btn delete-comment-btn" data-toggle="modal"
                   data-target="#deleteCommentModal" data-comment-id="{{ comment.id }}">Delete</button>
               </div>
@@ -548,7 +550,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Sidebar -->
       <div class="col-lg-4">
         <div class="sidebar">
@@ -619,6 +621,61 @@
     </div>
   </div>
 
+  <!-- Info Section -->
+  <section class="info_section">
+    <div class="container">
+      <div class="info_top">
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="info_links">
+              <h4>QUICK LINKS</h4>
+              <div class="info_links_menu">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'about' %}">About</a>
+                <a href="{% url 'comics' %}">Comics</a>
+                <a href="{% url 'blogs' %}">Blog</a>
+                <a href="{% url 'contact' %}">Contact Us</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-4 col-lg-3 mx-auto">
+            <div class="info_post">
+              <h5>INSTAGRAM FEEDS</h5>
+              <div class="post_box">
+                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}" alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}" alt="Instagram Post">
+                </div>
+                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}" alt="Instagram Post"></div>
+                <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}" alt="Instagram Post">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="info_form">
+              <h4>Read. Shop. Explore. The Comic World Awaits You!</h4>
+              <form action="">
+                <input type="email" placeholder="Enter Your Email" name="email" required />
+                <button type="submit">Subscribe</button>
+              </form>
+              <div class="social_box">
+                <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                <a href="https://www.linkedin.com/uas/login-submit"><i class="fa fa-linkedin"
+                    aria-hidden="true"></i></a>
+                <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer Section -->
   <footer class="footer_section">
     <div class="container">
@@ -630,28 +687,28 @@
   <script src="{% static 'edgecut/js/jquery-3.4.1.min.js' %}"></script>
   <script src="{% static 'edgecut/js/bootstrap.js' %}"></script>
   <script src="{% static 'edgecut/js/custom.js' %}"></script>
-  
+
   <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
       // Current year for footer
       $('#displayYear').text(new Date().getFullYear());
-      
+
       // Real-time Like Functionality
-      $('.like-form').on('submit', function(e) {
+      $('.like-form').on('submit', function (e) {
         e.preventDefault();
         const $form = $(this);
         const url = $form.attr('action');
         const $likeButton = $('#like-button');
         const $likesCount = $('#likes-count');
-        
+
         $.ajax({
           type: 'POST',
           url: url,
           data: $form.serialize(),
-          success: function(response) {
+          success: function (response) {
             if (response.success) {
               $likesCount.text(response.likes_count);
-              
+
               if (response.liked) {
                 $likeButton.addClass('liked');
                 $likeButton.html('<i class="fa fa-heart"></i> Liked');
@@ -667,33 +724,33 @@
               }
             }
           },
-          error: function() {
+          error: function () {
             alert('An error occurred while processing your request.');
           }
         });
       });
-      
+
       // Real-time Comment Submission
-      $('.comment-form').on('submit', function(e) {
+      $('.comment-form').on('submit', function (e) {
         e.preventDefault();
         const $form = $(this);
         const url = $form.attr('action');
         const $commentTextarea = $form.find('textarea[name=content]');
         const $commentsList = $('#comments-list');
         const $commentsCount = $('#comments-count');
-        
+
         $.ajax({
           type: 'POST',
           url: url,
           data: $form.serialize(),
-          success: function(response) {
+          success: function (response) {
             if (response.success) {
               // Clear the textarea
               $commentTextarea.val('');
-              
+
               // Update comments count
               $commentsCount.text(response.comments_count);
-              
+
               // Prepend new comment
               const newComment = `
                 <div class="comment-item" id="comment-${response.comment_id}">
@@ -714,13 +771,13 @@
                   </div>
                 </div>
               `;
-              
+
               if ($commentsList.find('.alert').length) {
                 $commentsList.html(newComment);
               } else {
                 $commentsList.prepend(newComment);
               }
-              
+
               // Scroll to the new comment
               $('html, body').animate({
                 scrollTop: $(`#comment-${response.comment_id}`).offset().top - 100
@@ -733,92 +790,92 @@
               }
             }
           },
-          error: function() {
+          error: function () {
             alert('An error occurred while processing your request.');
           }
         });
       });
-      
+
       // Edit Comment Modal Setup
-      $(document).on('click', '.edit-comment-btn', function() {
+      $(document).on('click', '.edit-comment-btn', function () {
         const commentId = $(this).data('comment-id');
         const commentContent = $(this).data('comment-content');
-        
+
         $('#editCommentId').val(commentId);
         $('#editCommentContent').val(commentContent);
         $('#editCommentForm').attr('action', `/blogs/${commentId}/edit/`);
       });
-      
+
       // Edit Comment Submission
-      $('#editCommentForm').on('submit', function(e) {
+      $('#editCommentForm').on('submit', function (e) {
         e.preventDefault();
         const $form = $(this);
         const url = $form.attr('action');
         const commentId = $('#editCommentId').val();
-        
+
         $.ajax({
           type: 'POST',
           url: url,
           data: $form.serialize(),
-          success: function(response) {
+          success: function (response) {
             if (response.success) {
               // Update the comment content
               $(`#comment-${commentId} .comment-content`).text(response.content);
-              
+
               // Update the edit button data
               $(`#comment-${commentId} .edit-comment-btn`).data('comment-content', response.content);
-              
+
               // Close the modal
               $('#editCommentModal').modal('hide');
             } else {
               alert(response.message || 'An error occurred.');
             }
           },
-          error: function() {
+          error: function () {
             alert('An error occurred while processing your request.');
           }
         });
       });
-      
+
       // Delete Comment Modal Setup
-      $(document).on('click', '.delete-comment-btn', function() {
+      $(document).on('click', '.delete-comment-btn', function () {
         const commentId = $(this).data('comment-id');
         $('#deleteCommentId').val(commentId);
         $('#deleteCommentForm').attr('action', `/blogs/${commentId}/delete/`);
       });
-      
+
       // Delete Comment Submission
-      $('#deleteCommentForm').on('submit', function(e) {
+      $('#deleteCommentForm').on('submit', function (e) {
         e.preventDefault();
         const $form = $(this);
         const url = $form.attr('action');
         const commentId = $('#deleteCommentId').val();
         const $commentsCount = $('#comments-count');
-        
+
         $.ajax({
           type: 'POST',
           url: url,
           data: $form.serialize(),
-          success: function(response) {
+          success: function (response) {
             if (response.success) {
               // Remove the comment from DOM
               $(`#comment-${commentId}`).remove();
-              
+
               // Update comments count
               $commentsCount.text(response.comments_count);
-              
+
               // Show message if no comments left
               if (response.comments_count == 0) {
                 $('#comments-list').html('<div class="alert alert-info">No comments yet. Be the first to comment!</div>');
               }
-              
+
               // Close the modal
               $('#deleteCommentModal').modal('hide');
             } else {
               alert(response.message || 'An error occurred.');
             }
           },
-          error: function() {
+          error: function () {
             alert('An error occurred while processing your request.');
           }
         });
@@ -826,4 +883,5 @@
     });
   </script>
 </body>
+
 </html>
