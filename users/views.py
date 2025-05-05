@@ -112,7 +112,7 @@ def comic_detail(request, pk):
     })
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-YOUR_DOMAIN = 'https://comic-broz.onrender.com/'  # Update to production domain later
+YOUR_DOMAIN = 'https://comic-broz.onrender.com'  # Update to production domain later
 
 @login_required
 def comic_purchase(request, pk):
