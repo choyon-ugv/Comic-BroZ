@@ -6,6 +6,107 @@
 {% block body_class %}sub_page{% endblock %}
 
 {% block content %}
+<style>
+    /* New presentation with modern, interactive layout */
+    .furniture_section .box {
+        height: 440px; /* Fixed height for uniformity */
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+        perspective: 1000px; /* For 3D effect */
+    }
+    .furniture_section .box:hover {
+        transform: scale(1.02);
+        z-index: 1;
+    }
+    .furniture_section .img-box {
+        height: 280px; /* Adjusted for new layout */
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .furniture_section .img-box img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain; /* Maintains original image aspect */
+        transition: transform 0.4s ease;
+    }
+    .furniture_section .box:hover .img-box img {
+        transform: rotate(2deg) scale(1.1); /* Subtle tilt effect */
+    }
+    .furniture_section .detail-box {
+        flex: 1;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent); /* Subtle gradient */
+    }
+    .furniture_section .detail-box h5 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: transform 0.3s ease;
+    }
+    .furniture_section .box:hover .detail-box h5 {
+        transform: translateY(-5px);
+    }
+    .furniture_section .price_box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 0 10px;
+    }
+    .furniture_section .price_box h6 {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .furniture_section .price_box a {
+        padding: 8px 18px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+    }
+    .furniture_section .price_box a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.3s ease;
+    }
+    .furniture_section .price_box a:hover::before {
+        left: 0;
+    }
+    @media (max-width: 768px) {
+        .furniture_section .box {
+            height: 400px;
+        }
+        .furniture_section .img-box {
+            height: 240px;
+        }
+        .furniture_section .detail-box h5 {
+            font-size: 1rem;
+        }
+    }
+</style>
+
 <section class="furniture_section layout_padding" data-aos="fade-up">
     <div class="container">
         <div class="heading_container">
