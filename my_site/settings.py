@@ -36,7 +36,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-ALLOWED_HOSTS = ['comic-broz.onrender.com,']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
