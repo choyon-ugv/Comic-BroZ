@@ -279,7 +279,7 @@ def profile_view(request):
 
 
 def blog(request):
-    blogs = Blog.objects.all().order_by('-created')
+    blogs = Blog.objects.all().order_by('-created_at')
     return render(request, 'blogs.html', {'blogs': blogs})
 
 @login_required
