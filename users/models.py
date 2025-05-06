@@ -113,9 +113,12 @@ class Comment(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Comment by {self.user.username} on {self.blog.title}"
+        username = self.user.username if self.user else "Anonymous"
+        blog_title = self.blog.title if self.blog else "Unknown Blog"
+        return f"Comment by {username} on {blog_title}"
     
     
 class Profile(models.Model):

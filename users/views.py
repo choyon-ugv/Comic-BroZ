@@ -344,62 +344,81 @@ def add_comment(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
     if request.method == 'POST':
         content = request.POST.get('content')
+        parent_id = request.POST.get('parent_id')
         if content:
-            comment = Comment.objects.create(
-                blog=blog,
-                user=request.user,
-                content=content,
-                created_at=timezone.now()
-            )
-            return JsonResponse({
-                'success': True,
-                'comment_id': comment.id,
-                'content': comment.content,
-                'user_username': comment.user.username,
-                'created_at': comment.created_at.strftime('%B %d, %Y %H:%M'),
-                'comments_count': blog.comments.count()
-            })
+            try:
+                cleaned_content = bleach.clean(content, tags=['p', 'b', 'i', 'u', 'strong', 'em'], strip=True)
+                parent = None
+                if parent_id:
+                    parent = get_object_or_404(Comment, id=parent_id, blog=blog)
+                comment = Comment.objects.create(
+                    blog=blog,
+                    user=request.user,
+                    content=cleaned_content,
+                    created_at=timezone.now(),
+                    parent=parent
+                )
+                return JsonResponse({
+                    'success': True,
+                    'comment_id': comment.id,
+                    'content': comment.content,
+                    'user_username': comment.user.username if comment.user else 'Anonymous',
+                    'user_avatar': comment.user.profile.profile_image.url if comment.user and hasattr(comment.user, 'profile') and comment.user.profile.profile_image else '/static/edgecut/images/default-avatar.png',
+                    'created_at': comment.created_at.strftime('%B %d, %Y %H:%M'),
+                    'comments_count': blog.comments.count(),
+                    'parent_id': parent_id if parent_id else None
+                })
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': f'Error creating comment: {str(e)}'}, status=500)
         return JsonResponse({'success': False, 'message': 'Comment cannot be empty'}, status=400)
-    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=400)
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
 @login_required
 def edit_comment(request, blog_id, comment_id):
     blog = get_object_or_404(Blog, id=blog_id)
     comment = get_object_or_404(Comment, id=comment_id, blog=blog)
     
-    # Check if the user is the comment author
-    if comment.user != request.user:
-        messages.error(request, "You are not authorized to edit this comment.")
-        return redirect('blog_detail', blog_id=blog.id)
+    if not comment.user or comment.user != request.user:
+        return JsonResponse({'success': False, 'message': 'You are not authorized to edit this comment'}, status=403)
     
     if request.method == 'POST':
         content = request.POST.get('content')
         if content:
-            comment.content = content
-            comment.save()
-            messages.success(request, "Comment updated successfully.")
-            return redirect('blog_detail', blog_id=blog.id)
-        else:
-            messages.error(request, "Comment content cannot be empty.")
+            try:
+                comment.content = bleach.clean(content, tags=['p', 'b', 'i', 'u', 'strong', 'em'], strip=True)
+                comment.save()
+                return JsonResponse({
+                    'success': True,
+                    'comment_id': comment.id,
+                    'content': comment.content,
+                    'message': 'Comment updated successfully'
+                })
+            except Exception as e:
+                return JsonResponse({'success': False, 'message': f'Error updating comment: {str(e)}'}, status=500)
+        return JsonResponse({'success': False, 'message': 'Comment content cannot be empty'}, status=400)
     
-    return redirect('blog_detail', blog_id=blog.id)
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
 @login_required
 def delete_comment(request, blog_id, comment_id):
     blog = get_object_or_404(Blog, id=blog_id)
     comment = get_object_or_404(Comment, id=comment_id, blog=blog)
     
-    # Check if the user is the comment author
-    if comment.user != request.user:
-        messages.error(request, "You are not authorized to delete this comment.")
-        return redirect('blog_detail', blog_id=blog.id)
+    if not comment.user or comment.user != request.user:
+        return JsonResponse({'success': False, 'message': 'You are not authorized to delete this comment'}, status=403)
     
     if request.method == 'POST':
-        comment.delete()
-        messages.success(request, "Comment deleted successfully.")
-        return redirect('blog_detail', blog_id=blog.id)
+        try:
+            comment.delete()
+            return JsonResponse({
+                'success': True,
+                'comments_count': blog.comments.count(),
+                'message': 'Comment deleted successfully'
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error deleting comment: {str(e)}'}, status=500)
     
-    return redirect('blog_detail', blog_id=blog.id)
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
 def contact(request):
     return render(request, 'contact.html')
