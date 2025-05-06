@@ -20,7 +20,85 @@
     <!-- Custom Styles -->
     <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
     <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+    <style>
+        /* Profile Dropdown Styles */
+        .profile-link {
+            display: flex;
+            align-items: center;
+            color: #fff !important;
+            transition: color 0.3s ease;
+        }
+
+        .profile-link:hover {
+            color: #ffda79 !important;
+            text-decoration: none;
+        }
+
+        .profile-dropdown-menu {
+            background: #2a2a3b;
+            border: 2px solid #ff4d6d;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            min-width: 250px;
+            padding: 10px;
+        }
+
+        .profile-dropdown-menu .dropdown-item {
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .profile-dropdown-menu .dropdown-item:hover {
+            background: #ff4d6d;
+            color: #fff;
+        }
+
+        .profile-info {
+            padding: 15px;
+            border-bottom: 1px solid #ff4d6d;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-info img, .profile-info .fa-user-circle {
+            margin-right: 10px;
+        }
+
+        .profile-info .username {
+            font-weight: 600;
+            color: #ffda79;
+        }
+
+        .profile-info .email {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .active-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border-radius: 50%;
+            margin-left: 8px;
+            box-shadow: 0 0 5px #28a745;
+        }
+
+        /* Active state for profile dropdown */
+        .nav-item.active .profile-link {
+            color: #ff4d6d !important;
+            font-weight: bold;
+        }
+
+        .nav-item.active .profile-link .active-status {
+            background: #ffda79;
+            box-shadow: 0 0 5px #ffda79;
+        }
+    </style>
+    {% endblock %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -44,16 +122,19 @@
                         <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item {% if request.resolver_match.url_name == 'character_card' %}active{% endif %}">
+                        <li
+                            class="nav-item {% if request.resolver_match.url_name == 'character_card' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'movies' %}">Movies</a>
                         </li>
-                        <li class="nav-item {% if request.resolver_match.url_name in 'comics, comic_detail, comic_purchase, comic_favorite, comic_unfavorite, comic_read, success_page' %}active{% endif %}">
+                        <li
+                            class="nav-item {% if request.resolver_match.url_name in 'comics, comic_detail, comic_purchase, comic_favorite, comic_unfavorite, comic_read, success_page' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'comics' %}">Comics</a>
                         </li>
-                        <li class="nav-item {% if request.resolver_match.url_name in 'blogs, blog_detail, like_blog, add_comment, edit_comment, delete_comment' %}active{% endif %}">
+                        <li
+                            class="nav-item {% if request.resolver_match.url_name in 'blogs, blog_detail, like_blog, add_comment, edit_comment, delete_comment' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'blogs' %}">Blog</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
@@ -63,33 +144,33 @@
                 </div>
                 <div class="quote_btn-container">
                     {% if user.is_authenticated %}
-                    <div class="dropdown">
-                        <a class="dropdown-toggle text-decoration-none" href="#" role="button" id="profileDropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="dropdown nav-item {% if request.resolver_match.url_name in 'profile, profile-update, change_password, logout' %}active{% endif %}">
+                        <a class="dropdown-toggle text-decoration-none profile-link" href="#" role="button"
+                            id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {% if user.profile.profile_image %}
-                            <img src="{{ user.profile.profile_image.url }}" alt="Profile"
-                                class="rounded-circle mr-2" style="width: 30px; height: 30px; object-fit: cover;">
+                            <img src="{{ user.profile.profile_image.url }}" alt="Profile" class="rounded-circle mr-2"
+                                style="width: 30px; height: 30px; object-fit: cover;">
                             {% else %}
                             <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
                             {% endif %}
                             <span>{{ user.username }}</span>
+                            <span class="active-status"></span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
-                            <div class="dropdown-item d-flex align-items-center">
+                        <div class="dropdown-menu dropdown-menu-right profile-dropdown-menu" aria-labelledby="profileDropdown">
+                            <div class="profile-info">
                                 {% if user.profile.profile_image %}
                                 <img src="{{ user.profile.profile_image.url }}" alt="Profile"
-                                    class="rounded-circle mr-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                    class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% else %}
-                                <i class="fa fa-user-circle fa-2x mr-2" aria-hidden="true"></i>
+                                <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
                                 {% endif %}
                                 <div>
-                                    <strong>{{ user.username }}</strong>
-                                    <br>
-                                    <small>{{ user.email }}</small>
+                                    <div class="username">{{ user.username }}</div>
+                                    <div class="email">{{ user.email }}</div>
                                 </div>
                             </div>
-                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
+                            <a class="dropdown-item" href="{% url 'profile-update' %}">Edit Profile</a>
                             <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
                             <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                         </div>
@@ -154,10 +235,14 @@
                                 <button type="submit">Subscribe</button>
                             </form>
                             <div class="social_box">
-                                <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-                                <a href="https://www.linkedin.com/uas/login-submit"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-                                <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+                                <a href="https://www.facebook.com/"><i class="fa fa-facebook"
+                                        aria-hidden="true"></i></a>
+                                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter"
+                                        aria-hidden="true"></i></a>
+                                <a href="https://www.linkedin.com/uas/login-submit"><i class="fa fa-linkedin"
+                                        aria-hidden="true"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fa fa-instagram"
+                                        aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>
@@ -183,6 +268,7 @@
     <script src="{% static 'edgecut/js/custom.js' %}"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+    
     <script>
         // Initialize AOS
         AOS.init({ duration: 1000, once: true });
@@ -190,15 +276,31 @@
         // Navbar Active State
         document.addEventListener('DOMContentLoaded', function () {
             const navLinks = document.querySelectorAll('.custom_nav-container .navbar-nav .nav-item .nav-link');
+            const dropdownLinks = document.querySelectorAll('.profile-dropdown-menu .dropdown-item');
+            const profileNavItem = document.querySelector('.quote_btn-container .nav-item');
 
+            // Helper function to clear all active states
+            function clearActiveStates() {
+                document.querySelectorAll('.custom_nav-container .navbar-nav .nav-item, .quote_btn-container .nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+
+            // Handle main nav links
             navLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
-                    // Remove .active from all nav items
-                    document.querySelectorAll('.custom_nav-container .navbar-nav .nav-item').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    // Add .active to the parent nav-item of the clicked link
+                    clearActiveStates();
                     this.parentElement.classList.add('active');
+                });
+            });
+
+            // Handle profile dropdown links
+            dropdownLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    clearActiveStates();
+                    if (profileNavItem) {
+                        profileNavItem.classList.add('active');
+                    }
                 });
             });
         });
@@ -218,7 +320,7 @@
         function applyTheme(theme) {
             const body = document.body;
             const buttons = document.querySelectorAll('.btn, .nav_search-btn');
-            const links = document.querySelectorAll('.nav-link, .price_box a, .detail-box a, .info_links_menu a');
+            const links = document.querySelectorAll('.nav-link, .price_box a, .detail-box a, .info_links_menu a, .profile-dropdown-menu .dropdown-item');
             const headings = document.querySelectorAll('.heading_container h2, .navbar-brand span');
 
             if (theme === 'ironman') {
