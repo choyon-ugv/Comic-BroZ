@@ -9,8 +9,8 @@
     <link rel="icon" href="{% static 'edgecut/images/png.png' %}" type="image/gif" />
     <title>{% block title %}Comic Bro'Z{% endblock %}</title>
 
-    <!-- Bootstrap 4.5.2 CSS (CDN for consistency with home.html) -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap 4.5.2 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
     <!-- Font Awesome -->
@@ -20,7 +20,8 @@
     <!-- Custom Styles -->
     <link href="{% static 'edgecut/css/style.css' %}" rel="stylesheet" />
     <link href="{% static 'edgecut/css/responsive.css' %}" rel="stylesheet" />
-    {% block extra_css %}
+
+    {% block extra_css %}{% endblock %}
     <style>
         /* Profile Dropdown Styles */
         .profile-link {
@@ -63,7 +64,8 @@
             align-items: center;
         }
 
-        .profile-info img, .profile-info .fa-user-circle {
+        .profile-info img,
+        .profile-info .fa-user-circle {
             margin-right: 10px;
         }
 
@@ -98,7 +100,6 @@
             box-shadow: 0 0 5px #ffda79;
         }
     </style>
-    {% endblock %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -122,19 +123,16 @@
                         <li class="nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li
-                            class="nav-item {% if request.resolver_match.url_name == 'character_card' %}active{% endif %}">
+                        <li class="nav-item {% if request.resolver_match.url_name == 'character_card' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'movies' %}">Movies</a>
                         </li>
-                        <li
-                            class="nav-item {% if request.resolver_match.url_name in 'comics, comic_detail, comic_purchase, comic_favorite, comic_unfavorite, comic_read, success_page' %}active{% endif %}">
+                        <li class="nav-item {% if request.resolver_match.url_name in 'comics, comic_detail, comic_purchase, comic_favorite, comic_unfavorite, comic_read, success_page' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'comics' %}">Comics</a>
                         </li>
-                        <li
-                            class="nav-item {% if request.resolver_match.url_name in 'blogs, blog_detail, like_blog, add_comment, edit_comment, delete_comment' %}active{% endif %}">
+                        <li class="nav-item {% if request.resolver_match.url_name in 'blogs, blog_detail, like_blog, add_comment, edit_comment, delete_comment' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'blogs' %}">Blog</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
@@ -212,16 +210,16 @@
                         <div class="info_post">
                             <h5>INSTAGRAM FEEDS</h5>
                             <div class="post_box">
-                                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}"
-                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/100.png' %}" alt="Instagram Post">
+                                </div>
                                 <div class="img-box"><img src="{% static 'edgecut/images/Untitled (2).png' %}"
                                         alt="Instagram Post"></div>
                                 <div class="img-box"><img src="{% static 'edgecut/images/Untitled (3).png' %}"
                                         alt="Instagram Post"></div>
                                 <div class="img-box"><img src="{% static 'edgecut/images/Untitled (4).png' %}"
                                         alt="Instagram Post"></div>
-                                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}"
-                                        alt="Instagram Post"></div>
+                                <div class="img-box"><img src="{% static 'edgecut/images/500.png' %}" alt="Instagram Post">
+                                </div>
                                 <div class="img-box"><img src="{% static 'edgecut/images/Untitled (1).png' %}"
                                         alt="Instagram Post"></div>
                             </div>
@@ -235,14 +233,11 @@
                                 <button type="submit">Subscribe</button>
                             </form>
                             <div class="social_box">
-                                <a href="https://www.facebook.com/"><i class="fa fa-facebook"
-                                        aria-hidden="true"></i></a>
-                                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter"
-                                        aria-hidden="true"></i></a>
+                                <a href="https://www.facebook.com/"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="https://x.com/i/flow/login"><i class="fa fa-twitter" aria-hidden="true"></i></a>
                                 <a href="https://www.linkedin.com/uas/login-submit"><i class="fa fa-linkedin"
                                         aria-hidden="true"></i></a>
-                                <a href="https://www.instagram.com/"><i class="fa fa-instagram"
-                                        aria-hidden="true"></i></a>
+                                <a href="https://www.instagram.com/"><i class="fa fa-instagram" aria-hidden="true"></i></a>
                             </div>
                         </div>
                     </div>
@@ -268,7 +263,7 @@
     <script src="{% static 'edgecut/js/custom.js' %}"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
-    
+
     <script>
         // Initialize AOS
         AOS.init({ duration: 1000, once: true });
@@ -308,7 +303,7 @@
         // Set Footer Year
         document.getElementById('displayYear').textContent = new Date().getFullYear();
 
-        // Dropdown
+        // Dropdown initialization for Bootstrap 4
         $(document).ready(function () {
             $('#profileDropdown').dropdown();
         });

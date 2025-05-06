@@ -345,6 +345,83 @@
     color: var(--secondary);
   }
 
+  /* Profile Dropdown Styles */
+  .profile-link {
+    display: flex;
+    align-items: center;
+    color: #fff !important;
+    transition: color 0.3s ease;
+  }
+
+  .profile-link:hover {
+    color: #ffda79 !important;
+    text-decoration: none;
+  }
+
+  .profile-dropdown-menu {
+    background: #2a2a3b;
+    border: 2px solid #ff4d6d;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    min-width: 250px;
+    padding: 10px;
+  }
+
+  .profile-dropdown-menu .dropdown-item {
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+  }
+
+  .profile-dropdown-menu .dropdown-item:hover {
+    background: #ff4d6d;
+    color: #fff;
+  }
+
+  .profile-info {
+    padding: 15px;
+    border-bottom: 1px solid #ff4d6d;
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-info img,
+  .profile-info .fa-user-circle {
+    margin-right: 10px;
+  }
+
+  .profile-info .username {
+    font-weight: 600;
+    color: #ffda79;
+  }
+
+  .profile-info .email {
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+
+  .active-status {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background: #28a745;
+    border-radius: 50%;
+    margin-left: 8px;
+    box-shadow: 0 0 5px #28a745;
+  }
+
+  /* Active state for profile dropdown */
+  .nav-item.active .profile-link {
+    color: #ff4d6d !important;
+    font-weight: bold;
+  }
+
+  .nav-item.active .profile-link .active-status {
+    background: #ffda79;
+    box-shadow: 0 0 5px #ffda79;
+  }
+
   /* Responsive Styles */
   @media (max-width: 768px) {
     .blog-title {

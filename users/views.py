@@ -11,6 +11,7 @@ from django.utils import timezone
 from dashboard.forms import BlogForm
 import stripe
 from payments.models import Order
+from django.db.models import Q, F
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -420,8 +421,33 @@ def profile_update(request):
     return render(request, 'profile_update.html', {'u_form': u_form, 'p_form': p_form})
 
 
-def card_list(request):
+def character_card(request):
+    # Get all characters
     characters = CharacterCard.objects.all()
-    return render(request, 'characters_card_list.html', {'characters': characters})
+
+    # Handle search
+    search_query = request.GET.get('search', '')
+    if search_query:
+        characters = characters.filter(name__icontains=search_query)
+
+    # Handle sorting
+    sort_option = request.GET.get('sort', '')
+    if sort_option == 'name_asc':
+        characters = characters.order_by('name')
+    elif sort_option == 'name_desc':
+        characters = characters.order_by('-name')
+    elif sort_option == 'rating_desc':
+        # Calculate total rating as the sum of attributes
+        characters = characters.annotate(
+            total_rating=F('special_powers') + F('cunning') + F('strength') + F('technology')
+        ).order_by('-total_rating')
+    elif sort_option == 'debut_year_desc':
+        characters = characters.order_by('-debut_year')
+
+    context = {
+        'characters': characters,
+        'search_query': search_query,
+    }
+    return render(request, 'characters_card_list.html', context)
 
 
