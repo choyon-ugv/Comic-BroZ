@@ -69,6 +69,7 @@ class Comic(models.Model):
     purchased_by = models.ManyToManyField(User, related_name='purchased_comics', blank=True)
     read_by = models.ManyToManyField(User, related_name='read_comics', blank=True)
     favorited_by = models.ManyToManyField(User, related_name='favorited_comics', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -90,8 +91,8 @@ class Blog(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs_written', blank=True, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)      
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)  
 
     def __str__(self):
         return self.title

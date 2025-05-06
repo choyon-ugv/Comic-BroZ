@@ -77,15 +77,15 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
-    blogs = Blog.objects.all()[:3]
-    comics = Comic.objects.all()[:6]
+    blogs = Blog.objects.all().order_by('-created_at')[:3]
+    comics = Comic.objects.all().order_by('-created_at')[:6]
     testimonials = Testimonial.objects.all()
     print("Testimonials:", list(testimonials))  # For debugging
     return render(request, 'home.html', {
         'username': request.user.username,
         'blogs': blogs,
         'comics': comics,
-        'testimonials': testimonials  # Fixed typo
+        'testimonials': testimonials
     })
 
 def movies(request):
@@ -101,7 +101,7 @@ def about(request):
 
 
 def comic(request):
-    comics = Comic.objects.all()
+    comics = Comic.objects.all().order_by('-created_at')
     return render(request, 'comics.html', {'comics': comics})
 
 def comic_detail(request, pk):

@@ -14,7 +14,7 @@
 
         {% if user.is_authenticated %}
         <div class="text-right mb-4">
-            <a href="{% url 'create_blog' %}" class="btn btn-primary write-blog-btn">
+            <a href="{% url 'create_blog' %}" class="write-blog-btn">
                 Write a Blog
             </a>
         </div>
@@ -50,9 +50,13 @@
 .write-blog-btn {
     background: #ffda79;
     color: #2a2a3b;
-    border: 2px solid #ff4d6d;
+    border: 1.5px solid #ff4d6d;
     font-family: 'Bangers', cursive;
     transition: transform 0.3s, background 0.3s;
+    border-radius: 0.5rem;
+    padding: 0.37rem 1.75rem;
+    font-size: 2rem;
+    line-height: 1.5rem;
 }
 .write-blog-btn:hover {
     background: #ff4d6d;
