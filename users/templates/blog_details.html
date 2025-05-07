@@ -151,6 +151,7 @@
 
   .comment-form {
     margin-bottom: 2rem;
+    position: relative;
   }
 
   .comment-textarea {
@@ -176,11 +177,17 @@
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
   }
 
   .comment-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+  }
+
+  .comment-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   .comments-list {
@@ -266,10 +273,16 @@
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
   }
 
   .comment-action-btn:hover {
     background: var(--primary);
+  }
+
+  .comment-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   .reply-form {
@@ -337,13 +350,72 @@
     color: var(--secondary);
   }
 
-  .close {
+  .modal-close-btn {
     color: var(--secondary);
     font-size: 1.5rem;
   }
 
   .modal-close-btn:hover {
     color: var(--primary);
+  }
+
+  .loading-spinner {
+    display: none;
+    border: 3px solid var(--secondary);
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .message-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+  }
+
+  .message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: var(--light);
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    animation: slideIn 0.3s ease;
+  }
+
+  .message.success {
+    background: #28a745;
+    border: 2px solid #218838;
+  }
+
+  .message.error {
+    background: #dc3545;
+    border: 2px solid #c82333;
+  }
+
+  .message i {
+    font-size: 1.2rem;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
 
   @media (max-width: 768px) {
@@ -360,11 +432,17 @@
     .comments-section {
       padding: 1.5rem;
     }
+
+    .message-container {
+      max-width: 90%;
+      right: 10px;
+    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="message-container" id="message-container"></div>
 <main class="blog-detail-container">
   <div class="row">
     <div class="col-lg-8">
@@ -419,7 +497,7 @@
         <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form" id="main-comment-form">
           {% csrf_token %}
           <textarea class="comment-textarea" name="content" placeholder="Write your comment..." required></textarea>
-          <button type="submit" class="comment-submit">Post Comment</button>
+          <button type="submit" class="comment-submit">Post Comment <span class="loading-spinner"></span></button>
         </form>
         {% else %}
         <div class="alert alert-info">
@@ -437,32 +515,32 @@
                 {% else %}
                 <img src="{% static 'edgecut/images/default-avatar.png' %}" class="comment-avatar" alt="Anonymous">
                 {% endif %}
-                <span class="comment-name">
-                  {{ comment.user.username|default:"Anonymous" }}
-                </span>
+                <span class="comment-name">{{ comment.user.username|default:"Anonymous" }}</span>
               </div>
               <span class="comment-date">{{ comment.created_at|date:"F d, Y H:i" }}</span>
             </div>
             <div class="comment-content">{{ comment.content }}</div>
             <div class="comment-actions">
               {% if user.is_authenticated %}
-              <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">Reply</button>
+              <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">Reply <span class="loading-spinner"></span></button>
               {% endif %}
               {% if user.is_authenticated and comment.user == user %}
               <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                data-comment-id="{{ comment.id }}" data-comment-content="{{ comment.content|escapejs }}">Edit</button>
+                data-comment-id="{{ comment.id }}" data-comment-content="{{ comment.content|escapejs }}">Edit <span class="loading-spinner"></span></button>
               <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                data-comment-id="{{ comment.id }}">Delete</button>
+                data-comment-id="{{ comment.id }}">Delete <span class="loading-spinner"></span></button>
               {% endif %}
             </div>
-            {% if user.is_authenticated %}
-            <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ comment.id }}">
-              {% csrf_token %}
-              <input type="hidden" name="parent_id" value="{{ comment.id }}">
-              <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
-              <button type="submit" class="comment-submit">Post Reply</button>
-            </form>
-            {% endif %}
+            <div class="reply-form-container" id="reply-form-container-{{ comment.id }}">
+              {% if user.is_authenticated %}
+              <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ comment.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
+                <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
+              </form>
+              {% endif %}
+            </div>
             {% for reply in comment.replies.all %}
             <div class="comment-item reply" id="comment-{{ reply.id }}">
               <div class="comment-header">
@@ -472,32 +550,32 @@
                   {% else %}
                   <img src="{% static 'edgecut/images/default-avatar.png' %}" class="comment-avatar" alt="Anonymous">
                   {% endif %}
-                  <span class="comment-name">
-                    {{ reply.user.username|default:"Anonymous" }}
-                  </span>
+                  <span class="comment-name">{{ reply.user.username|default:"Anonymous" }}</span>
                 </div>
                 <span class="comment-date">{{ reply.created_at|date:"F d, Y H:i" }}</span>
               </div>
               <div class="comment-content">{{ reply.content }}</div>
               <div class="comment-actions">
                 {% if user.is_authenticated %}
-                <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ reply.id }}">Reply</button>
+                <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ reply.id }}">Reply <span class="loading-spinner"></span></button>
                 {% endif %}
                 {% if user.is_authenticated and reply.user == user %}
                 <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                  data-comment-id="{{ reply.id }}" data-comment-content="{{ reply.content|escapejs }}">Edit</button>
+                  data-comment-id="{{ reply.id }}" data-comment-content="{{ reply.content|escapejs }}">Edit <span class="loading-spinner"></span></button>
                 <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                  data-comment-id="{{ reply.id }}">Delete</button>
+                  data-comment-id="{{ reply.id }}">Delete <span class="loading-spinner"></span></button>
                 {% endif %}
               </div>
-              {% if user.is_authenticated %}
-              <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ reply.id }}">
-                {% csrf_token %}
-                <input type="hidden" name="parent_id" value="{{ reply.id }}">
-                <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
-                <button type="submit" class="comment-submit">Post Reply</button>
-              </form>
-              {% endif %}
+              <div class="reply-form-container" id="reply-form-container-{{ reply.id }}">
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ reply.id }}">
+                  {% csrf_token %}
+                  <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                  <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
+                  <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
+                </form>
+                {% endif %}
+              </div>
             </div>
             {% endfor %}
           </div>
@@ -538,7 +616,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="comment-action-btn" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="comment-submit">Save Changes</button>
+          <button type="submit" class="comment-submit">Save Changes <span class="loading-spinner"></span></button>
         </div>
       </form>
     </div>
@@ -560,7 +638,7 @@
         <input type="hidden" name="comment_id" id="deleteCommentId">
         <div class="modal-footer">
           <button type="button" class="comment-action-btn" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="comment-submit" style="background: #dc3545;">Delete</button>
+          <button type="submit" class="comment-submit" style="background: #dc3545;">Delete <span class="loading-spinner"></span></button>
         </div>
       </form>
     </div>
@@ -573,224 +651,261 @@
 <script src="{% static 'edgecut/js/bootstrap.js' %}"></script>
 <script src="{% static 'edgecut/js/custom.js' %}"></script>
 <script>
-  $(document).ready(function () {
-    const blogId = {{ blog.id }};
-    console.log('Blog ID loaded:', blogId);
+$(document).ready(function () {
+  const blogId = {{ blog.id }};
+  console.log('Blog ID loaded:', blogId);
 
-    // Set up CSRF token for AJAX
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
-          }
+  // CSRF token setup
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
       }
-      return cookieValue;
     }
-    const csrftoken = getCookie('csrftoken');
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
 
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-        if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && !this.crossDomain) {
-          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+  $.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    }
+  });
+
+  // Show message UI
+  function showMessage(type, text) {
+    const message = `
+      <div class="message ${type}">
+        <i class="fa ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        ${text}
+      </div>`;
+    $('#message-container').append(message);
+    setTimeout(() => {
+      $('#message-container .message').first().fadeOut(300, function() { $(this).remove(); });
+    }, 3000);
+  }
+
+  // Show/hide loading spinner
+  function toggleLoading($button, show) {
+    const $spinner = $button.find('.loading-spinner');
+    $button.prop('disabled', show);
+    $spinner.css('display', show ? 'inline-block' : 'none');
+  }
+
+  // Like form
+  $('.like-form').on('submit', function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const url = $form.attr('action');
+    const $likeButton = $('#like-button');
+    const $likesCount = $('#likes-count');
+    console.log('Like form submitted:', url);
+    toggleLoading($likeButton, true);
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: $form.serialize(),
+      success: function(response) {
+        console.log('Like response:', response);
+        toggleLoading($likeButton, false);
+        if (response.success) {
+          $likesCount.text(response.likes_count);
+          if (response.liked) {
+            $likeButton.addClass('liked').html('<i class="fa fa-heart"></i> Liked');
+          } else {
+            $likeButton.removeClass('liked').html('<i class="fa fa-heart-o"></i> Like');
+          }
+          showMessage('success', response.message || 'Like updated');
+        } else {
+          showMessage('error', response.message || 'Error liking post');
         }
+      },
+      error: function(xhr) {
+        console.error('Like error:', xhr);
+        toggleLoading($likeButton, false);
+        showMessage('error', xhr.responseJSON?.message || 'Error processing like request');
       }
     });
+  });
 
-    // Like form
-    $('.like-form').on('submit', function (e) {
-      e.preventDefault();
-      const $form = $(this);
-      const url = $form.attr('action');
-      const $likeButton = $('#like-button');
-      const $likesCount = $('#likes-count');
-      console.log('Like form submitted:', url);
+  // Comment form (main and replies)
+  $(document).on('submit', '.comment-form', function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const url = $form.attr('action');
+    const $textarea = $form.find('textarea[name=content]');
+    const parentId = $form.find('input[name=parent_id]').val();
+    const $commentsList = $('#comments-list');
+    const $commentsCount = $('#comments-count');
+    const $submitButton = $form.find('.comment-submit');
+    console.log('Comment form submitted:', { url, parentId, content: $textarea.val() });
+    toggleLoading($submitButton, true);
 
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: $form.serialize(),
-        success: function (response) {
-          console.log('Like response:', response);
-          if (response.success) {
-            $likesCount.text(response.likes_count);
-            if (response.liked) {
-              $likeButton.addClass('liked').html('<i class="fa fa-heart"></i> Liked');
-            } else {
-              $likeButton.removeClass('liked').html('<i class="fa fa-heart-o"></i> Like');
-            }
-          } else {
-            alert(response.message || 'Error liking post');
-          }
-        },
-        error: function (xhr) {
-          console.error('Like error:', xhr);
-          alert('Error processing like request');
-        }
-      });
-    });
-
-    // Comment form (main and replies)
-    $('.comment-form').on('submit', function (e) {
-      e.preventDefault();
-      const $form = $(this);
-      const url = $form.attr('action');
-      const $textarea = $form.find('textarea[name=content]');
-      const parentId = $form.find('input[name=parent_id]').val();
-      const $commentsList = $('#comments-list');
-      const $commentsCount = $('#comments-count');
-      console.log('Comment form submitted:', { url, parentId, content: $textarea.val() });
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: $form.serialize(),
-        success: function (response) {
-          console.log('Comment response:', response);
-          if (response.success) {
-            $textarea.val('');
-            $commentsCount.text(response.comments_count);
-            const avatar = response.user_avatar || '{% static "edgecut/images/default-avatar.png" %}';
-            const newComment = `
-              <div class="comment-item ${parentId ? 'reply' : ''}" id="comment-${response.comment_id}">
-                <div class="comment-header">
-                  <div class="comment-user">
-                    <img src="${avatar}" class="comment-avatar" alt="${response.user_username}">
-                    <span class="comment-name">${response.user_username || 'Anonymous'}</span>
-                  </div>
-                  <span class="comment-date">${response.created_at}</span>
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: $form.serialize(),
+      success: function(response) {
+        console.log('Comment response:', response);
+        toggleLoading($submitButton, false);
+        if (response.success) {
+          $textarea.val('');
+          $commentsCount.text(response.comments_count);
+          const avatar = response.user_avatar || '{% static "edgecut/images/default-avatar.png" %}';
+          const newComment = `
+            <div class="comment-item ${parentId ? 'reply' : ''}" id="comment-${response.comment_id}">
+              <div class="comment-header">
+                <div class="comment-user">
+                  <img src="${avatar}" class="comment-avatar" alt="${response.user_username}">
+                  <span class="comment-name">${response.user_username || 'Anonymous'}</span>
                 </div>
-                <div class="comment-content">${response.content}</div>
-                <div class="comment-actions">
-                  <button class="comment-action-btn reply-comment-btn" data-comment-id="${response.comment_id}">Reply</button>
-                  <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                    data-comment-id="${response.comment_id}" data-comment-content="${response.content.replace(/"/g, '&quot;')}">Edit</button>
-                  <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                    data-comment-id="${response.comment_id}">Delete</button>
-                </div>
+                <span class="comment-date">${response.created_at}</span>
+              </div>
+              <div class="comment-content">${response.content}</div>
+              <div class="comment-actions">
+                <button class="comment-action-btn reply-comment-btn" data-comment-id="${response.comment_id}">Reply <span class="loading-spinner"></span></button>
+                <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
+                  data-comment-id="${response.comment_id}" data-comment-content="${response.content.replace(/"/g, '&quot;')}">Edit <span class="loading-spinner"></span></button>
+                <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                  data-comment-id="${response.comment_id}">Delete <span class="loading-spinner"></span></button>
+              </div>
+              <div class="reply-form-container" id="reply-form-container-${response.comment_id}">
                 <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-${response.comment_id}">
                   <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
                   <input type="hidden" name="parent_id" value="${response.comment_id}">
                   <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
-                  <button type="submit" class="comment-submit">Post Reply</button>
+                  <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
                 </form>
               </div>
-            `;
-            if (parentId) {
-              $(`#comment-${parentId}`).append(newComment);
-              $form.slideUp();
+            </div>`;
+          if (parentId) {
+            $(`#comment-${parentId}`).append(newComment);
+            $form.slideUp();
+          } else {
+            if ($commentsList.find('.alert').length) {
+              $commentsList.html(newComment);
             } else {
-              if ($commentsList.find('.alert').length) {
-                $commentsList.html(newComment);
-              } else {
-                $commentsList.prepend(newComment);
-              }
+              $commentsList.prepend(newComment);
             }
-            $('html, body').animate({ scrollTop: $(`#comment-${response.comment_id}`).offset().top - 100 }, 500);
-            alert('Comment posted successfully');
-          } else {
-            alert(response.message || 'Error posting comment');
           }
-        },
-        error: function (xhr) {
-          console.error('Comment error:', xhr);
-          alert('Error processing comment: ' + (xhr.responseJSON?.message || xhr.statusText));
+          $('html, body').animate({ scrollTop: $(`#comment-${response.comment_id}`).offset().top - 100 }, 500);
+          showMessage('success', 'Comment posted successfully');
+        } else {
+          showMessage('error', response.message || 'Error posting comment');
         }
-      });
-    });
-
-    // Edit comment
-    $(document).on('click', '.edit-comment-btn', function () {
-      const commentId = $(this).data('comment-id');
-      const content = $(this).data('comment-content');
-      console.log('Edit clicked:', { commentId, content });
-      $('#editCommentId').val(commentId);
-      $('#editCommentContent').val(content);
-      $('#editCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/edit/`);
-    });
-
-    $('#editCommentForm').on('submit', function (e) {
-      e.preventDefault();
-      const $form = $(this);
-      const url = $form.attr('action');
-      const commentId = $('#editCommentId').val();
-      console.log('Edit form submitted:', { url, commentId });
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: $form.serialize(),
-        success: function (response) {
-          console.log('Edit response:', response);
-          if (response.success) {
-            $(`#comment-${commentId} .comment-content`).text(response.content);
-            $(`#comment-${commentId} .edit-comment-btn`).data('comment-content', response.content);
-            $('#editCommentModal').modal('hide');
-            alert(response.message);
-          } else {
-            alert(response.message || 'Error updating comment');
-          }
-        },
-        error: function (xhr) {
-          console.error('Edit error:', xhr);
-          alert('Error processing edit: ' + (xhr.responseJSON?.message || xhr.statusText));
-        }
-      });
-    });
-
-    // Delete comment
-    $(document).on('click', '.delete-comment-btn', function () {
-      const commentId = $(this).data('comment-id');
-      console.log('Delete clicked:', { commentId });
-      $('#deleteCommentId').val(commentId);
-      $('#deleteCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/delete/`);
-    });
-
-    $('#deleteCommentForm').on('submit', function (e) {
-      e.preventDefault();
-      const $form = $(this);
-      const url = $form.attr('action');
-      const commentId = $('#deleteCommentId').val();
-      console.log('Delete form submitted:', { url, commentId });
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: $form.serialize(),
-        success: function (response) {
-          console.log('Delete response:', response);
-          if (response.success) {
-            $(`#comment-${commentId}`).remove();
-            $('#comments-count').text(response.comments_count);
-            if (response.comments_count === 0) {
-              $('#comments-list').html('<div class="alert alert-info">No comments yet. Be the first to comment!</div>');
-            }
-            $('#deleteCommentModal').modal('hide');
-            alert(response.message);
-          } else {
-            alert(response.message || 'Error deleting comment');
-          }
-        },
-        error: function (xhr) {
-          console.error('Delete error:', xhr);
-          alert('Error processing delete: ' + (xhr.responseJSON?.message || xhr.statusText));
-        }
-      });
-    });
-
-    // Reply toggle
-    $(document).on('click', '.reply-comment-btn', function () {
-      const commentId = $(this).data('comment-id');
-      const $replyForm = $(`#reply-form-${commentId}`);
-      console.log('Reply toggle:', { commentId });
-      $('.reply-form').not($replyForm).slideUp();
-      $replyForm.slideToggle();
+      },
+      error: function(xhr) {
+        console.error('Comment error:', xhr);
+        toggleLoading($submitButton, false);
+        showMessage('error', xhr.responseJSON?.message || 'Error processing comment');
+      }
     });
   });
+
+  // Edit comment
+  $(document).on('click', '.edit-comment-btn', function() {
+    const commentId = $(this).data('comment-id');
+    const content = $(this).data('comment-content');
+    console.log('Edit clicked:', { commentId, content });
+    $('#editCommentId').val(commentId);
+    $('#editCommentContent').val(content);
+    $('#editCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/edit/`);
+  });
+
+  $('#editCommentForm').on('submit', function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const url = $form.attr('action');
+    const commentId = $('#editCommentId').val();
+    const $submitButton = $form.find('.comment-submit');
+    console.log('Edit form submitted:', { url, commentId });
+    toggleLoading($submitButton, true);
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: $form.serialize(),
+      success: function(response) {
+        console.log('Edit response:', response);
+        toggleLoading($submitButton, false);
+        if (response.success) {
+          $(`#comment-${commentId} .comment-content`).text(response.content);
+          $(`#comment-${commentId} .edit-comment-btn`).data('comment-content', response.content);
+          $('#editCommentModal').modal('hide');
+          showMessage('success', response.message);
+        } else {
+          showMessage('error', response.message || 'Error updating comment');
+        }
+      },
+      error: function(xhr) {
+        console.error('Edit error:', xhr);
+        toggleLoading($submitButton, false);
+        showMessage('error', xhr.responseJSON?.message || 'Error processing edit');
+      }
+    });
+  });
+
+  // Delete comment
+  $(document).on('click', '.delete-comment-btn', function() {
+    const commentId = $(this).data('comment-id');
+    console.log('Delete clicked:', { commentId });
+    $('#deleteCommentId').val(commentId);
+    $('#deleteCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/delete/`);
+  });
+
+  $('#deleteCommentForm').on('submit', function(e) {
+    e.preventDefault();
+    const $form = $(this);
+    const url = $form.attr('action');
+    const commentId = $('#deleteCommentId').val();
+    const $submitButton = $form.find('.comment-submit');
+    console.log('Delete form submitted:', { url, commentId });
+    toggleLoading($submitButton, true);
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: $form.serialize(),
+      success: function(response) {
+        console.log('Delete response:', response);
+        toggleLoading($submitButton, false);
+        if (response.success) {
+          $(`#comment-${commentId}`).remove();
+          $('#comments-count').text(response.comments_count);
+          if (response.comments_count === 0) {
+            $('#comments-list').html('<div class="alert alert-info">No comments yet. Be the first to comment!</div>');
+          }
+          $('#deleteCommentModal').modal('hide');
+          showMessage('success', response.message);
+        } else {
+          showMessage('error', response.message || 'Error deleting comment');
+        }
+      },
+      error: function(xhr) {
+        console.error('Delete error:', xhr);
+        toggleLoading($submitButton, false);
+        showMessage('error', xhr.responseJSON?.message || 'Error processing delete');
+      }
+    });
+  });
+
+  // Reply toggle
+  $(document).on('click', '.reply-comment-btn', function() {
+    const commentId = $(this).data('comment-id');
+    const $replyFormContainer = $(`#reply-form-container-${commentId}`);
+    console.log('Reply toggle:', { commentId });
+    $('.reply-form').not($replyFormContainer.find('.reply-form')).slideUp();
+    $replyFormContainer.find('.reply-form').slideToggle();
+  });
+});
 </script>
 {% endblock %}
