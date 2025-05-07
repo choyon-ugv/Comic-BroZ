@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Delete Blog{% endblock %}
+
+{% block body_class %}sub_page{% endblock %}
+
+{% block content %}
+<section class="blog_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Delete Blog</h2>
+        </div>
+        <div class="confirmation-container">
+            <p>Are you sure you want to delete the blog post "<strong>{{ blog.title|default:"Untitled Blog" }}</strong>"? This action cannot be undone.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="button-group">
+                    <button type="submit" class="btn btn-danger delete-btn">Delete</button>
+                    <a href="{% url 'blog_list' %}" class="btn btn-secondary cancel-btn">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<style>
+.confirmation-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.confirmation-container p {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 1.5rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}

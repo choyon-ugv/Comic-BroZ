@@ -9,6 +9,7 @@ from .forms import RegisterForm, LoginForm, PasswordChangeForm, UserUpdateForm, 
 from .models import User, Movie, Comic, Blog, Comment, Like, Profile, WatchHistory, Testimonial, CharacterCard
 from django.utils import timezone
 from dashboard.forms import BlogForm
+from django.views.decorators.http import require_POST
 import stripe
 import bleach
 from payments.models import Order
@@ -300,6 +301,44 @@ def create_blog(request):
         form = BlogForm()
     return render(request, 'create_blog.html', {'form': form})
 
+@login_required
+@require_POST
+def edit_blog(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+    if blog.author != request.user:
+        return JsonResponse({'success': False, 'message': 'You are not authorized to edit this blog.'}, status=403)
+    
+    form = BlogForm(request.POST, request.FILES, instance=blog)
+    if form.is_valid():
+        blog = form.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Blog updated successfully!',
+            'blog': {
+                'id': blog.id,
+                'title': blog.title,
+                'content': blog.content,
+                'image': blog.image.url if blog.image else ''
+            }
+        })
+    else:
+        return JsonResponse({'success': False, 'message': 'Error updating blog. Please check the form.'}, status=400)
+
+@login_required
+@require_POST
+def delete_blog(request, blog_id):
+    blog = get_object_or_404(Blog, id=blog_id)
+    if blog.author != request.user:
+        messages.error(request, 'You are not authorized to delete this blog.')
+        return redirect('blogs')
+    
+    try:
+        blog.delete()
+        messages.success(request, 'Blog deleted successfully!')
+    except Exception as e:
+        messages.error(request, f'Error deleting blog: {str(e)}')
+    return redirect('blogs')
+
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
     comments = blog.comments.filter(parent__isnull=True).prefetch_related('replies')
@@ -317,8 +356,6 @@ def blog_detail(request, blog_id):
         'user_liked': user_liked,
     }
     return render(request, 'blog_details.html', context)
-
-
 
 @login_required
 def like_blog(request, blog_id):

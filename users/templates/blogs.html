@@ -12,6 +12,15 @@
             <h2>Latest Blog</h2>
         </div>
 
+        <!-- Messages Area -->
+        <div id="messages" class="messages mb-4">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
         {% if user.is_authenticated %}
         <div class="text-right mb-4">
             <a href="{% url 'create_blog' %}" class="write-blog-btn" aria-label="Write a new blog post">
@@ -22,7 +31,7 @@
 
         <div class="blog-grid">
             {% for blog in blogs %}
-            <div class="blog-card" data-aos="zoom-in">
+            <div class="blog-card" data-aos="zoom-in" id="blog-{{ blog.id }}">
                 <div class="img-box">
                     {% if blog.image %}
                     <img src="{{ blog.image.url }}" alt="{{ blog.title|default_if_none:'Blog'|escape }}">
@@ -33,7 +42,13 @@
                 <div class="detail-box">
                     <h5>{{ blog.title|default:"Untitled Blog" }}</h5>
                     <p>{{ blog.content|truncatewords:20|default:"No content available." }}</p>
-                    <a href="{% url 'blog_detail' blog.id %}" class="btn btn-primary read-more-btn" aria-label="Read more about {{ blog.title|escape }}">Read More</a>
+                    <div class="button-group">
+                        <a href="{% url 'blog_detail' blog.id %}" class="btn btn-primary read-more-btn" aria-label="Read more about {{ blog.title|escape }}">Read More</a>
+                        {% if user.is_authenticated and user == blog.author %}
+                        <button class="btn btn-secondary edit-btn" data-blog-id="{{ blog.id }}" data-title="{{ blog.title|escape }}" data-content="{{ blog.content|escape }}" {% if blog.image %}data-image="{{ blog.image.url }}"{% endif %} data-toggle="modal" data-target="#editBlogModal" aria-label="Edit {{ blog.title|escape }}">Edit</button>
+                        <button class="btn btn-danger delete-btn" data-blog-id="{{ blog.id }}" data-title="{{ blog.title|escape }}" data-toggle="modal" data-target="#deleteBlogModal-{{ blog.id }}" aria-label="Delete {{ blog.title|escape }}">Delete</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% empty %}
@@ -44,6 +59,78 @@
         </div>
     </div>
 </section>
+
+<!-- Edit Blog Modal -->
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBlogModalLabel">Edit Blog</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form id="editBlogForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit_title">Title</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_content">Content</label>
+                        <textarea class="form-control" id="edit_content" name="content" rows="5" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_image">Image</label>
+                        <input type="file" class="form-control-file" id="edit_image" name="image" accept="image/*">
+                        <div class="image-preview mt-2">
+                            <img id="image_preview" src="{% static 'edgecut/images/default-blog.jpg' %}" alt="Image Preview" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Blog Modals (One per Blog) -->
+{% for blog in blogs %}
+{% if user.is_authenticated and user == blog.author %}
+<div class="modal fade" id="deleteBlogModal-{{ blog.id }}" tabindex="-1" aria-labelledby="deleteBlogModalLabel-{{ blog.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteBlogModalLabel-{{ blog.id }}">Delete Blog</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form action="{% url 'delete_blog' blog.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body text-center">
+                    <div class="delete-icon mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#dc3545" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 5h4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5v-7z"/>
+                            <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1H2.5V1zM4 3v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V3H4zm9.5 0H15v1h-1.5V3zM1 4V3h1.5v1H1z"/>
+                        </svg>
+                    </div>
+                    <p class="delete-message">Are you sure you want to delete "<strong>{{ blog.title|default:'Untitled Blog'|escape }}</strong>"? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary cancel-btn" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger delete-btn">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
 
 <style>
 /* Button Styles */
@@ -119,8 +206,14 @@
     margin-bottom: 1rem;
 }
 
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .read-more-btn {
-    align-self: flex-start;
     background-color: #ff4d6d;
     border: none;
     color: white;
@@ -134,6 +227,32 @@
     background-color: #ff1e56;
 }
 
+.edit-btn {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+.edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
 /* No Blogs Message */
 .no-blogs-message {
     text-align: center;
@@ -141,5 +260,226 @@
     color: #888;
     font-size: 1.2rem;
 }
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background-color: #ffda79;
+    border-bottom: none;
+}
+
+.modal-title {
+    font-family: 'Bangers', cursive;
+    color: #2a2a3b;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: #2a2a3b;
+}
+
+.form-control,
+.form-control-file {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+}
+
+.form-control:focus {
+    border-color: #ff4d6d;
+    box-shadow: 0 0 5px rgba(255, 77, 109, 0.5);
+}
+
+.image-preview img {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem;
+}
+
+.save-btn {
+    background-color: #ff4d6d;
+    border: none;
+    color: white;
+}
+.save-btn:hover {
+    background-color: #ff1e56;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Delete Modal Specific Styles */
+.delete-icon {
+    animation: pulse 1.5s infinite;
+}
+
+.delete-message {
+    font-size: 1.1rem;
+    color: #2a2a3b;
+}
+
+.delete-message strong {
+    color: #dc3545;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Messages Styles */
+.messages .alert {
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+}
+.messages .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.messages .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
 </style>
+
+<script>
+// Handle edit button click to populate the edit modal
+document.addEventListener('DOMContentLoaded', function() {
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const blogId = this.getAttribute('data-blog-id');
+            const title = this.getAttribute('data-title');
+            const content = this.getAttribute('data-content');
+            const image = this.getAttribute('data-image');
+            
+            // Populate form fields
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_content').value = content;
+            
+            // Set image preview
+            const imagePreview = document.getElementById('image_preview');
+            if (image) {
+                imagePreview.src = image;
+            } else {
+                imagePreview.src = "{% static 'edgecut/images/default-blog.jpg' %}";
+            }
+            
+            // Set form data-blog-id
+            const form = document.getElementById('editBlogForm');
+            form.setAttribute('data-blog-id', blogId);
+        });
+    });
+
+    // Handle image preview
+    const imageInput = document.getElementById('edit_image');
+    const imagePreview = document.getElementById('image_preview');
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            imagePreview.src = imagePreview.getAttribute('data-default') || "{% static 'edgecut/images/default-blog.jpg' %}";
+        }
+    });
+
+    // Handle edit form submission with AJAX
+    const editForm = document.getElementById('editBlogForm');
+    editForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const blogId = this.getAttribute('data-blog-id');
+        const formData = new FormData(this);
+
+        fetch(`/blog/${blogId}/edit/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update blog card
+                const blogCard = document.getElementById(`blog-${blogId}`);
+                blogCard.querySelector('.detail-box h5').textContent = data.blog.title || 'Untitled Blog';
+                blogCard.querySelector('.detail-box p').textContent = (data.blog.content.split(' ').slice(0, 20).join(' ') + (data.blog.content.split(' ').length > 20 ? '...' : '')) || 'No content available.';
+                const imgElement = blogCard.querySelector('.img-box img');
+                imgElement.src = data.blog.image || "{% static 'edgecut/images/default-blog.jpg' %}";
+                imgElement.alt = data.blog.title || 'Blog';
+
+                // Update edit button data attributes
+                const editButton = blogCard.querySelector('.edit-btn');
+                editButton.setAttribute('data-title', data.blog.title);
+                editButton.setAttribute('data-content', data.blog.content);
+                editButton.setAttribute('data-image', data.blog.image || '');
+
+                // Show success message
+                showMessage('success', data.message);
+
+                // Close modal
+                $('#editBlogModal').modal('hide');
+
+                // Scroll to edited blog
+                blogCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                showMessage('error', data.message || 'Error updating blog.');
+            }
+        })
+        .catch(error => {
+            showMessage('error', 'An error occurred. Please try again.');
+            console.error('Edit Error:', error);
+        });
+    });
+
+    // Function to show messages (for AJAX edit)
+    function showMessage(type, message) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.className = `alert alert-${type}`;
+        messageElement.textContent = message;
+        messagesDiv.appendChild(messageElement);
+        
+        // Auto-remove message after 5 seconds
+        setTimeout(() => {
+            messageElement.remove();
+        }, 5000);
+    }
+});
+</script>
 {% endblock %}

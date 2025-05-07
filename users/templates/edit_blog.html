@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comic Bro'Z - Edit Blog{% endblock %}
+
+{% block body_class %}sub_page{% endblock %}
+
+{% block content %}
+<section class="blog_section layout_padding" data-aos="fade-up">
+    <div class="container">
+        <div class="heading_container">
+            <h2>Edit Blog</h2>
+        </div>
+        <div class="form-container">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary save-btn">Save Changes</button>
+                    <a href="{% url 'blog_list' %}" class="btn btn-secondary cancel-btn">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<style>
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+form p {
+    margin-bottom: 1rem;
+}
+
+form label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: #2a2a3b;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+form input[type="text"],
+form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+form input[type="file"] {
+    padding: 0.5rem 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn {
+    background-color: #ff4d6d;
+    border: none;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #ff1e56;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+</style>
+{% endblock %}
