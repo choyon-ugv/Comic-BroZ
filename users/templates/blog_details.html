@@ -496,7 +496,8 @@
 
         <div class="comments-list" id="comments-list">
           {% for comment in comments %}
-          <div class="comment-item {% if comment.parent %}reply{% endif %}" id="comment-{{ comment.id }}">
+          {% if not comment.parent %}
+          <div class="comment-item" id="comment-{{ comment.id }}">
             <div class="comment-header">
               <div class="comment-user">
                 {% if comment.user and comment.user.profile.profile_image %}
@@ -593,6 +594,7 @@
               {% endfor %}
             </div>
           </div>
+          {% endif %}
           {% empty %}
           <div class="alert alert-info">No comments yet. Be the first to comment!</div>
           {% endfor %}
@@ -768,9 +770,11 @@ $(document).ready(function () {
               <div class="replies-container" id="replies-container-${response.comment_id}"></div>
             </div>`;
           if (parentId) {
+            console.log('Appending reply to parent:', { parentId, commentId: response.comment_id });
             $(`#replies-container-${parentId}`).append(newComment);
             $form.slideUp();
           } else {
+            console.log('Appending top-level comment:', { commentId: response.comment_id });
             if ($commentsList.find('.alert').length) {
               $commentsList.html(newComment);
             } else {
