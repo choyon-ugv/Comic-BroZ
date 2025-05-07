@@ -303,10 +303,8 @@ def create_blog(request):
             blog = form.save(commit=False)
             blog.author = request.user
             blog.save()
-            messages.success(request, 'Your blog has been posted successfully!')
+            # messages.success(request, 'Your blog has been posted successfully!')
             return redirect('blogs')
-        else:
-            messages.error(request, 'Please correct the errors below.')
     else:
         form = BlogForm()
     return render(request, 'create_blog.html', {'form': form})
@@ -339,7 +337,7 @@ def edit_blog(request, blog_id):
 def delete_blog(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
     if blog.author != request.user:
-        messages.error(request, 'You are not authorized to delete this blog.')
+        # messages.error(request, 'You are not authorized to delete this blog.')
         return redirect('blogs')
     
     try:
