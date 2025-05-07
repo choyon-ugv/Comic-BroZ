@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Read {{ comic.title|default:'Untitled Comic' }} - Comic Bro'Z{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reader-container {
+        max-width: 1200px;
+        margin: 60px auto;
+        background: rgba(42, 42, 59, 0.9);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        position: relative;
+        min-height: 80vh;
+    }
+    .comic-page-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border-radius: 10px;
+        border: 3px solid #ffda79;
+        background: #2a2a3b;
+        margin-bottom: 20px;
+    }
+    .comic-page {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+    .navigation-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .nav-btn, .control-btn {
+        background: #ff4d6d;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-family: 'Bangers', cursive;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: transform 0.3s, background 0.3s;
+    }
+    .nav-btn:hover, .control-btn:hover {
+        background: #ffda79;
+        color: #2a2a3b;
+        transform: scale(1.1);
+    }
+    .nav-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+    }
+    .nav-btn i, .control-btn i {
+        margin: 0 8px;
+    }
+    .page-info {
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+    }
+    .control-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .fullscreen .reader-container {
+        margin: 0;
+        border-radius: 0;
+        padding: 20px;
+        height: 100vh;
+        width: 100vw;
+        max-width: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .fullscreen .comic-page-container {
+        flex-grow: 1;
+        max-height: none;
+        height: 80vh;
+    }
+    .fullscreen .comic-page {
+        max-height: 80vh;
+    }
+    .back-btn, .purchase-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 24px;
+        background: #ff4d6d;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-family: 'Bangers', cursive;
+        font-size: 1.2rem;
+        transition: transform 0.3s, background 0.3s;
+    }
+    .back-btn:hover, .purchase-btn:hover {
+        background: #ffda79;
+        color: #2a2a3b;
+        transform: scale(1.1);
+    }
+    .back-btn i, .purchase-btn i {
+        margin-right: 8px;
+    }
+    .purchase-prompt {
+        text-align: center;
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+        margin-top: 20px;
+    }
+    .purchase-prompt a {
+        color: #ffda79;
+        text-decoration: underline;
+    }
+    .purchase-prompt a:hover {
+        color: #fff;
+    }
+    .error-message {
+        color: #ff4d6d;
+        font-family: 'Poppins', sans-serif;
+        text-align: center;
+        margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+        .reader-container {
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .comic-page {
+            max-height: 60vh;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+    }
+    @media (max-width: 576px) {
+        .reader-container {
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .comic-page {
+            max-height: 50vh;
+        }
+        .navigation-controls {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .page-info {
+            margin: 10px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class=" minscreader-container" id="readerContainer" data-aos="fade-up">
+    <div class="navigation-controls" data-aos="fade-down">
+        <button id="prev-page" class="nav-btn" disabled><i class="fa fa-arrow-left"></i> Previous</button>
+        <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">{% if comic.pages.all %}{{ comic.pages.all|length }}{% else %}0{% endif %}</span></span>
+        <button id="next-page" class="nav-btn"><i class="fa fa-arrow-right"></i> Next</button>
+    </div>
+
+    <div class="comic-page-container" data-aos="zoom-in">
+        {% if comic.pages.all and comic.pages.all|length > 0 %}
+        <img id="comic-page" class="comic-page" src="{{ comic.pages.all.0.image.url|default:'/static/edgecut/images/default.png' }}" alt="Comic Page">
+        {% else %}
+        <p class="error-message">No pages available for this comic.</p>
+        {% endif %}
+    </div>
+
+    <div class="control-buttons" data-aos="fade-up">
+        <button id="zoom-in" class="control-btn"><i class="fa fa-search-plus"></i> Zoom In</button>
+        <button id="zoom-out" class="control-btn"><i class="fa fa-search-minus"></i> Zoom Out</button>
+        <button id="fullscreen" class="control-btn"><i class="fa fa-expand"></i> Fullscreen</button>
+    </div>
+
+    {% if is_preview %}
+    <div class="purchase-prompt">
+        <p>This is a preview. <a href="{% url 'comic_detail' comic.pk %}">Purchase this comic</a> to read all pages!</p>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'comic_detail' comic.pk %}" class="back-btn"><i class="fa fa-arrow-left"></i> Back to Comic Details</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof AOS !== 'undefined') {
+            AOS.init({ duration: 1000, once: true });
+        }
+
+        const isPreview = {{ is_preview|yesno:"true,false" }};
+        const comicPages = [
+            {% for page in comic.pages.all %}
+            "{{ page.image.url|default:'/static/edgecut/images/default.png' }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        let currentPage = 0;
+        let zoomLevel = 1;
+        const maxZoom = 2;
+        const minZoom = 0.5;
+        const zoomStep = 0.1;
+
+        const pageImg = document.getElementById('comic-page');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const currentPageSpan = document.getElementById('current-page');
+        const fullscreenBtn = document.getElementById('fullscreen');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+        const readerContainer = document.getElementById('readerContainer');
+
+        function updatePage() {
+            if (comicPages.length > 0) {
+                pageImg.src = comicPages[currentPage];
+                currentPageSpan.textContent = currentPage + 1;
+                prevBtn.disabled = currentPage === 0 || isPreview;
+                nextBtn.disabled = currentPage === comicPages.length - 1 || isPreview;
+                pageImg.style.transform = `scale(${zoomLevel})`;
+            }
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (!isPreview && currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (!isPreview && currentPage < comicPages.length - 1) {
+                currentPage++;
+                updatePage();
+            }
+        });
+
+        zoomInBtn.addEventListener('click', () => {
+            if (zoomLevel < maxZoom) {
+                zoomLevel += zoomStep;
+                pageImg.style.transform = `scale(${zoomLevel})`;
+            }
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            if (zoomLevel > minZoom) {
+                zoomLevel -= zoomStep;
+                pageImg.style.transform = `scale(${zoomLevel})`;
+            }
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                readerContainer.requestFullscreen().then(() => {
+                    readerContainer.classList.add('fullscreen');
+                    fullscreenBtn.innerHTML = '<i class="fa fa-compress"></i> Exit Fullscreen';
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    readerContainer.classList.remove('fullscreen');
+                    fullscreenBtn.innerHTML = '<i class="fa fa-expand"></i> Fullscreen';
+                });
+            }
+        });
+
+        pageImg.addEventListener('error', () => {
+            pageImg.src = "/static/edgecut/images/default.png";
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!isPreview && comicPages.length > 0) {
+                if (e.key === 'ArrowRight' && currentPage < comicPages.length - 1) {
+                    currentPage++;
+                    updatePage();
+                } else if (e.key === 'ArrowLeft' && currentPage > 0) {
+                    currentPage--;
+                    updatePage();
+                }
+            }
+        });
+
+        if (comicPages.length > 0) {
+            updatePage(); // Initial call
+        }
+    });
+</script>
+{% endblock %}

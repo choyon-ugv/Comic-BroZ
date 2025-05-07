@@ -74,6 +74,18 @@ class Comic(models.Model):
     def __str__(self):
         return self.title
     
+class ComicPage(models.Model):
+    comic = models.ForeignKey(Comic, related_name='pages', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='comic_pages/')
+    page_number = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ['page_number']
+
+    def __str__(self):
+        return f"{self.comic.title} - Page {self.page_number}"
+
+    
     
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comic_favorites')

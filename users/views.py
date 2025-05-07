@@ -114,6 +114,16 @@ def comic_detail(request, pk):
         'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY
     })
 
+@login_required
+def comic_read(request, pk):
+    comic = get_object_or_404(Comic, id=pk)
+    is_preview = request.user not in comic.purchased_by.all()
+    return render(request, 'comic_read.html', {
+        'comic': comic,
+        'is_preview': is_preview,
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY
+    })
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 YOUR_DOMAIN = 'https://comic-broz.onrender.com'  # Update to production domain later
 
@@ -206,23 +216,23 @@ def comic_unfavorite(request, pk):
             return JsonResponse({'success': True, 'message': f"Removed {comic.title} from favorites!"})
     return redirect('comic_detail', pk=pk)
 
-@login_required
-def comic_read(request, pk):
-    comic = get_object_or_404(Comic, pk=pk)
-    if request.user not in comic.purchased_by.all():
-        messages.error(request, "You must purchase this comic to read it.")
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': False, 'message': "You must purchase this comic to read it."})
-    else:
-        if request.user not in comic.read_by.all():
-            comic.read_by.add(request.user)
-            messages.success(request, f"You have read {comic.title}!")
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': True, 'message': f"You have read {comic.title}!"})
-        messages.info(request, f"Reading {comic.title}.")  # Placeholder
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': True, 'message': f"Reading {comic.title}."})
-    return redirect('comic_detail', pk=pk)
+# @login_required
+# def comic_read(request, pk):
+#     comic = get_object_or_404(Comic, pk=pk)
+#     if request.user not in comic.purchased_by.all():
+#         messages.error(request, "You must purchase this comic to read it.")
+#         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#             return JsonResponse({'success': False, 'message': "You must purchase this comic to read it."})
+#     else:
+#         if request.user not in comic.read_by.all():
+#             comic.read_by.add(request.user)
+#             messages.success(request, f"You have read {comic.title}!")
+#             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#                 return JsonResponse({'success': True, 'message': f"You have read {comic.title}!"})
+#         messages.info(request, f"Reading {comic.title}.")  # Placeholder
+#         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+#             return JsonResponse({'success': True, 'message': f"Reading {comic.title}."})
+#     return redirect('comic_detail', pk=pk)
 
 
 @login_required

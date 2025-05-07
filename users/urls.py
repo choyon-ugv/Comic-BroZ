@@ -11,6 +11,7 @@ urlpatterns = [
     # path('movies/<int:pk>/', movie_detail, name='movie_detail'),
     path('about/', about, name='about'),
     path('comics/', comic, name='comics'),
+    path('comics/<int:pk>/read/', comic_read, name='comic_read'),
     path('comics/<int:pk>/', comic_detail, name='comic_detail'),
     path('comics/<int:pk>/purchase/', comic_purchase, name='comic_purchase'),
     path('comics/success/<int:order_id>/', payment_success, name='payment_success'),
