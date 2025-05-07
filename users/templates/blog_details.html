@@ -290,6 +290,19 @@
     margin-top: 1rem;
   }
 
+  .edit-form, .delete-form {
+    display: none;
+    margin-top: 1rem;
+  }
+
+  .delete-form .comment-submit {
+    background: #dc3545;
+  }
+
+  .delete-form .comment-submit:hover {
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+  }
+
   .sidebar {
     background: var(--dark);
     border-radius: 12px;
@@ -333,30 +346,6 @@
     font-family: 'Bangers', cursive;
     font-size: 1.1rem;
     margin-bottom: 0.3rem;
-  }
-
-  .modal-content {
-    background: var(--dark);
-    border: 3px solid var(--primary);
-    border-radius: 12px;
-  }
-
-  .modal-header {
-    border-bottom: 1px solid rgba(255, 77, 109, 0.3);
-  }
-
-  .modal-title {
-    font-family: 'Bangers', cursive;
-    color: var(--secondary);
-  }
-
-  .modal-close-btn {
-    color: var(--secondary);
-    font-size: 1.5rem;
-  }
-
-  .modal-close-btn:hover {
-    color: var(--primary);
   }
 
   .loading-spinner {
@@ -525,12 +514,23 @@
               <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">Reply <span class="loading-spinner"></span></button>
               {% endif %}
               {% if user.is_authenticated and comment.user == user %}
-              <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                data-comment-id="{{ comment.id }}" data-comment-content="{{ comment.content|escapejs }}">Edit <span class="loading-spinner"></span></button>
-              <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                data-comment-id="{{ comment.id }}">Delete <span class="loading-spinner"></span></button>
+              <button class="comment-action-btn edit-comment-btn" data-comment-id="{{ comment.id }}">Edit <span class="loading-spinner"></span></button>
+              <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ comment.id }}">Delete <span class="loading-spinner"></span></button>
               {% endif %}
             </div>
+            {% if user.is_authenticated and comment.user == user %}
+            <form method="POST" action="{% url 'edit_comment' blog.id comment.id %}" class="edit-form" id="edit-form-{{ comment.id }}">
+              {% csrf_token %}
+              <textarea class="comment-textarea" name="content" required>{{ comment.content }}</textarea>
+              <button type="submit" class="comment-submit">Save <span class="loading-spinner"></span></button>
+              <button type="button" class="comment-action-btn cancel-edit-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+            </form>
+            <form method="POST" action="{% url 'delete_comment' blog.id comment.id %}" class="delete-form" id="delete-form-{{ comment.id }}">
+              {% csrf_token %}
+              <button type="submit" class="comment-submit">Confirm Delete <span class="loading-spinner"></span></button>
+              <button type="button" class="comment-action-btn cancel-delete-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+            </form>
+            {% endif %}
             <div class="reply-form-container" id="reply-form-container-{{ comment.id }}">
               {% if user.is_authenticated %}
               <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ comment.id }}">
@@ -541,43 +541,57 @@
               </form>
               {% endif %}
             </div>
-            {% for reply in comment.replies.all %}
-            <div class="comment-item reply" id="comment-{{ reply.id }}">
-              <div class="comment-header">
-                <div class="comment-user">
-                  {% if reply.user and reply.user.profile.profile_image %}
-                  <img src="{{ reply.user.profile.profile_image.url }}" class="comment-avatar" alt="{{ reply.user.username }}">
-                  {% else %}
-                  <img src="{% static 'edgecut/images/default-avatar.png' %}" class="comment-avatar" alt="Anonymous">
-                  {% endif %}
-                  <span class="comment-name">{{ reply.user.username|default:"Anonymous" }}</span>
+            <div class="replies-container" id="replies-container-{{ comment.id }}">
+              {% for reply in comment.replies.all %}
+              <div class="comment-item reply" id="comment-{{ reply.id }}">
+                <div class="comment-header">
+                  <div class="comment-user">
+                    {% if reply.user and reply.user.profile.profile_image %}
+                    <img src="{{ reply.user.profile.profile_image.url }}" class="comment-avatar" alt="{{ reply.user.username }}">
+                    {% else %}
+                    <img src="{% static 'edgecut/images/default-avatar.png' %}" class="comment-avatar" alt="Anonymous">
+                    {% endif %}
+                    <span class="comment-name">{{ reply.user.username|default:"Anonymous" }}</span>
+                  </div>
+                  <span class="comment-date">{{ reply.created_at|date:"F d, Y H:i" }}</span>
                 </div>
-                <span class="comment-date">{{ reply.created_at|date:"F d, Y H:i" }}</span>
-              </div>
-              <div class="comment-content">{{ reply.content }}</div>
-              <div class="comment-actions">
-                {% if user.is_authenticated %}
-                <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ reply.id }}">Reply <span class="loading-spinner"></span></button>
-                {% endif %}
+                <div class="comment-content">{{ reply.content }}</div>
+                <div class="comment-actions">
+                  {% if user.is_authenticated %}
+                  <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ reply.id }}">Reply <span class="loading-spinner"></span></button>
+                  {% endif %}
+                  {% if user.is_authenticated and reply.user == user %}
+                  <button class="comment-action-btn edit-comment-btn" data-comment-id="{{ reply.id }}">Edit <span class="loading-spinner"></span></button>
+                  <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ reply.id }}">Delete <span class="loading-spinner"></span></button>
+                  {% endif %}
+                </div>
                 {% if user.is_authenticated and reply.user == user %}
-                <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                  data-comment-id="{{ reply.id }}" data-comment-content="{{ reply.content|escapejs }}">Edit <span class="loading-spinner"></span></button>
-                <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                  data-comment-id="{{ reply.id }}">Delete <span class="loading-spinner"></span></button>
-                {% endif %}
-              </div>
-              <div class="reply-form-container" id="reply-form-container-{{ reply.id }}">
-                {% if user.is_authenticated %}
-                <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ reply.id }}">
+                <form method="POST" action="{% url 'edit_comment' blog.id reply.id %}" class="edit-form" id="edit-form-{{ reply.id }}">
                   {% csrf_token %}
-                  <input type="hidden" name="parent_id" value="{{ reply.id }}">
-                  <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
-                  <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
+                  <textarea class="comment-textarea" name="content" required>{{ reply.content }}</textarea>
+                  <button type="submit" class="comment-submit">Save <span class="loading-spinner"></span></button>
+                  <button type="button" class="comment-action-btn cancel-edit-btn" data-comment-id="{{ reply.id }}">Cancel</button>
+                </form>
+                <form method="POST" action="{% url 'delete_comment' blog.id reply.id %}" class="delete-form" id="delete-form-{{ reply.id }}">
+                  {% csrf_token %}
+                  <button type="submit" class="comment-submit">Confirm Delete <span class="loading-spinner"></span></button>
+                  <button type="button" class="comment-action-btn cancel-delete-btn" data-comment-id="{{ reply.id }}">Cancel</button>
                 </form>
                 {% endif %}
+                <div class="reply-form-container" id="reply-form-container-{{ reply.id }}">
+                  {% if user.is_authenticated %}
+                  <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ reply.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                    <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
+                    <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
+                  </form>
+                  {% endif %}
+                </div>
+                <div class="replies-container" id="replies-container-{{ reply.id }}"></div>
               </div>
+              {% endfor %}
             </div>
-            {% endfor %}
           </div>
           {% empty %}
           <div class="alert alert-info">No comments yet. Be the first to comment!</div>
@@ -600,50 +614,6 @@
     </div>
   </div>
 </main>
-
-<div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-        <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="POST" id="editCommentForm">
-        {% csrf_token %}
-        <div class="modal-body">
-          <textarea class="comment-textarea" name="content" id="editCommentContent" required></textarea>
-          <input type="hidden" name="comment_id" id="editCommentId">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="comment-action-btn" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="comment-submit">Save Changes <span class="loading-spinner"></span></button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteCommentModalLabel">Delete Comment</h5>
-        <button type="button" class="btn-close modal-close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this comment? This action cannot be undone.
-      </div>
-      <form method="POST" id="deleteCommentForm">
-        {% csrf_token %}
-        <input type="hidden" name="comment_id" id="deleteCommentId">
-        <div class="modal-footer">
-          <button type="button" class="comment-action-btn" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="comment-submit" style="background: #dc3545;">Delete <span class="loading-spinner"></span></button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -773,11 +743,20 @@ $(document).ready(function () {
               <div class="comment-content">${response.content}</div>
               <div class="comment-actions">
                 <button class="comment-action-btn reply-comment-btn" data-comment-id="${response.comment_id}">Reply <span class="loading-spinner"></span></button>
-                <button class="comment-action-btn edit-comment-btn" data-bs-toggle="modal" data-bs-target="#editCommentModal"
-                  data-comment-id="${response.comment_id}" data-comment-content="${response.content.replace(/"/g, '&quot;')}">Edit <span class="loading-spinner"></span></button>
-                <button class="comment-action-btn delete-comment-btn" data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
-                  data-comment-id="${response.comment_id}">Delete <span class="loading-spinner"></span></button>
+                <button class="comment-action-btn edit-comment-btn" data-comment-id="${response.comment_id}">Edit <span class="loading-spinner"></span></button>
+                <button class="comment-action-btn delete-comment-btn" data-comment-id="${response.comment_id}">Delete <span class="loading-spinner"></span></button>
               </div>
+              <form method="POST" action="/blogs/${blogId}/comments/${response.comment_id}/edit/" class="edit-form" id="edit-form-${response.comment_id}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                <textarea class="comment-textarea" name="content" required>${response.content}</textarea>
+                <button type="submit" class="comment-submit">Save <span class="loading-spinner"></span></button>
+                <button type="button" class="comment-action-btn cancel-edit-btn" data-comment-id="${response.comment_id}">Cancel</button>
+              </form>
+              <form method="POST" action="/blogs/${blogId}/comments/${response.comment_id}/delete/" class="delete-form" id="delete-form-${response.comment_id}">
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                <button type="submit" class="comment-submit">Confirm Delete <span class="loading-spinner"></span></button>
+                <button type="button" class="comment-action-btn cancel-delete-btn" data-comment-id="${response.comment_id}">Cancel</button>
+              </form>
               <div class="reply-form-container" id="reply-form-container-${response.comment_id}">
                 <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-${response.comment_id}">
                   <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
@@ -786,9 +765,10 @@ $(document).ready(function () {
                   <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
                 </form>
               </div>
+              <div class="replies-container" id="replies-container-${response.comment_id}"></div>
             </div>`;
           if (parentId) {
-            $(`#comment-${parentId}`).append(newComment);
+            $(`#replies-container-${parentId}`).append(newComment);
             $form.slideUp();
           } else {
             if ($commentsList.find('.alert').length) {
@@ -811,21 +791,27 @@ $(document).ready(function () {
     });
   });
 
-  // Edit comment
+  // Edit comment toggle
   $(document).on('click', '.edit-comment-btn', function() {
     const commentId = $(this).data('comment-id');
-    const content = $(this).data('comment-content');
-    console.log('Edit clicked:', { commentId, content });
-    $('#editCommentId').val(commentId);
-    $('#editCommentContent').val(content);
-    $('#editCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/edit/`);
+    console.log('Edit button clicked:', { commentId });
+    $('.edit-form').not(`#edit-form-${commentId}`).slideUp();
+    $(`#edit-form-${commentId}`).slideToggle();
   });
 
-  $('#editCommentForm').on('submit', function(e) {
+  // Cancel edit
+  $(document).on('click', '.cancel-edit-btn', function() {
+    const commentId = $(this).data('comment-id');
+    console.log('Cancel edit clicked:', { commentId });
+    $(`#edit-form-${commentId}`).slideUp();
+  });
+
+  // Edit form submission
+  $(document).on('submit', '.edit-form', function(e) {
     e.preventDefault();
     const $form = $(this);
     const url = $form.attr('action');
-    const commentId = $('#editCommentId').val();
+    const commentId = $form.attr('id').replace('edit-form-', '');
     const $submitButton = $form.find('.comment-submit');
     console.log('Edit form submitted:', { url, commentId });
     toggleLoading($submitButton, true);
@@ -839,8 +825,7 @@ $(document).ready(function () {
         toggleLoading($submitButton, false);
         if (response.success) {
           $(`#comment-${commentId} .comment-content`).text(response.content);
-          $(`#comment-${commentId} .edit-comment-btn`).data('comment-content', response.content);
-          $('#editCommentModal').modal('hide');
+          $(`#edit-form-${commentId}`).slideUp();
           showMessage('success', response.message);
         } else {
           showMessage('error', response.message || 'Error updating comment');
@@ -854,19 +839,27 @@ $(document).ready(function () {
     });
   });
 
-  // Delete comment
+  // Delete comment toggle
   $(document).on('click', '.delete-comment-btn', function() {
     const commentId = $(this).data('comment-id');
-    console.log('Delete clicked:', { commentId });
-    $('#deleteCommentId').val(commentId);
-    $('#deleteCommentForm').attr('action', `/blogs/${blogId}/comments/${commentId}/delete/`);
+    console.log('Delete button clicked:', { commentId });
+    $('.delete-form').not(`#delete-form-${commentId}`).slideUp();
+    $(`#delete-form-${commentId}`).slideToggle();
   });
 
-  $('#deleteCommentForm').on('submit', function(e) {
+  // Cancel delete
+  $(document).on('click', '.cancel-delete-btn', function() {
+    const commentId = $(this).data('comment-id');
+    console.log('Cancel delete clicked:', { commentId });
+    $(`#delete-form-${commentId}`).slideUp();
+  });
+
+  // Delete form submission
+  $(document).on('submit', '.delete-form', function(e) {
     e.preventDefault();
     const $form = $(this);
     const url = $form.attr('action');
-    const commentId = $('#deleteCommentId').val();
+    const commentId = $form.attr('id').replace('delete-form-', '');
     const $submitButton = $form.find('.comment-submit');
     console.log('Delete form submitted:', { url, commentId });
     toggleLoading($submitButton, true);
@@ -884,7 +877,6 @@ $(document).ready(function () {
           if (response.comments_count === 0) {
             $('#comments-list').html('<div class="alert alert-info">No comments yet. Be the first to comment!</div>');
           }
-          $('#deleteCommentModal').modal('hide');
           showMessage('success', response.message);
         } else {
           showMessage('error', response.message || 'Error deleting comment');
