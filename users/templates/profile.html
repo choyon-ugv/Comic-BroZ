@@ -87,7 +87,7 @@
             text-shadow: 2px 2px #ff4d6d;
             margin: 0;
         }
-        .profile-header PMID {
+        .profile-header p {
             color: #fff;
             font-style: italic;
         }
@@ -140,6 +140,10 @@
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .stat-card:hover {
+            background: #ff6d8d;
         }
         .stat-card h4 {
             font-family: 'Bangers', cursive;
@@ -201,217 +205,312 @@
             opacity: 0.1;
             z-index: -1;
         }
+        .modal-content {
+            background: #2a2a3b;
+            color: #fff;
+            border-radius: 15px;
+            border: 3px solid #ff4d6d;
+        }
+        .modal-header {
+            background: #ff4d6d;
+            color: #fff;
+            border-bottom: none;
+        }
+        .modal-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+        }
+        .modal-body img {
+            width: 100%;
+            border-radius: 10px;
+            border: 2px solid #ffda79;
+        }
+        .modal-body .comic-item {
+            background: #383850;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .modal-body .comic-item:hover {
+            background: #4a4a6a;
+        }
     </style>
 </head>
 <body>
+    <div class="parallax-bg"></div>
+    <div class="halftone-overlay"></div>
 
-        <!-- Profile Section -->
-        <div class="profile-container" data-aos="fade-up">
-            <div class="theme-switcher">
-                <select id="themeSelect">
-                    <option value="ironman">Iron Man</option>
-                    <option value="spiderman">Spider-Man</option>
-                    <option value="darkknight">Dark Knight</option>
-                </select>
+    <!-- Profile Section -->
+    <div class="profile-container" data-aos="fade-up">
+        <div class="theme-switcher">
+            <select id="themeSelect">
+                <option value="ironman">Iron Man</option>
+                <option value="spiderman">Spider-Man</option>
+                <option value="darkknight">Dark Knight</option>
+            </select>
+        </div>
+        <div class="profile-header">
+            <img src="{{ request.user.profile.profile_image.url|default:'https://via.placeholder.com/160' }}" alt="Profile Image">
+            <div>
+                <h2>{{ request.user.username }}</h2>
+                <p>{{ request.user.profile.favorite_quote|default:"No quote yet." }}</p>
+                <a href="{% url 'profile-update' %}" class="edit-btn">Edit Profile</a>
             </div>
-            <div class="profile-header">
-                <img src="{{ request.user.profile.profile_image.url|default:'https://via.placeholder.com/160' }}" alt="Profile Image">
-                <div>
-                    <h2>{{ request.user.username }}</h2>
-                    <p>{{ request.user.profile.favorite_quote|default:"No quote yet." }}</p>
-                    <a href="{% url 'profile-update' %}" class="edit-btn">Edit Profile</a>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">🧑 About</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="comics-tab" data-bs-toggle="tab" data-bs-target="#comics" type="button" role="tab" aria-controls="comics" aria-selected="false">📚 Comics</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="watch-tab" data-bs-toggle="tab" data-bs-target="#watch" type="button" role="tab" aria-controls="watch" aria-selected="false">🎬 Watch History</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="blog-tab" data-bs-toggle="tab" data-bs-target="#blog" type="button" role="tab" aria-controls="blog" aria-selected="false">📝 Blog Activity</button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="profileTabContent">
+            <!-- About Tab -->
+            <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab" data-aos="fade-right">
+                <div class="profile-card">
+                    <h3>About Me</h3>
+                    <p>{{ profile.bio|default:"Tell us about yourself!" }}</p>
+                </div>
+                <div class="profile-card">
+                    <h3>Hero Level</h3>
+                    <p>Current Level: <strong>{{ profile.level }}</strong></p>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ profile.progress }}%;" aria-valuenow="{{ profile.progress }}" aria-valuemin="0" aria-valuemax="100">{{ profile.progress }}%</div>
+                    </div>
+                    <p class="mt-2">
+                        {% if profile.level == "Sidekick" %}
+                            Complete more activities to reach <strong>Hero</strong>!
+                        {% elif profile.level == "Hero" %}
+                            Complete more activities to reach <strong>Superhero</strong>!
+                        {% else %}
+                            You're a <strong>Superhero</strong>! Keep ruling the comic universe!
+                        {% endif %}
+                    </p>
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <ul class="nav nav-tabs" id="profileTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="true">🧑 About</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="comics-tab" data-bs-toggle="tab" data-bs-target="#comics" type="button" role="tab" aria-controls="comics" aria-selected="false">📚 Comics</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="watch-tab" data-bs-toggle="tab" data-bs-target="#watch" type="button" role="tab" aria-controls="watch" aria-selected="false">🎬 Watch History</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="blog-tab" data-bs-toggle="tab" data-bs-target="#blog" type="button" role="tab" aria-controls="blog" aria-selected="false">📝 Blog Activity</button>
-                </li>
-            </ul>
-
-            <!-- Tab Content -->
-            <div class="tab-content" id="profileTabContent">
-                <!-- About Tab -->
-                <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab" data-aos="fade-right">
-                    <div class="profile-card">
-                        <h3>About Me</h3>
-                        <p>{{ profile.bio|default:"Tell us about yourself!" }}</p>
-                    </div>
-                    <div class="profile-card">
-                        <h3>Hero Level</h3>
-                        <p>Current Level: <strong>{{ profile.level }}</strong></p>
-                        <div class="progress" style="height: 20px;">
-                            <div class="progress-bar" role="progressbar" style="width: {{ profile.progress }}%;" aria-valuenow="{{ profile.progress }}" aria-valuemin="0" aria-valuemax="100">{{ profile.progress }}%</div>
+            <!-- Comics Tab -->
+            <div class="tab-pane fade" id="comics" role="tabpanel" aria-labelledby="comics-tab" data-aos="fade-left">
+                <div class="profile-card">
+                    <h3>My Comics</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-card" data-bs-toggle="modal" data-bs-target="#purchasedModal">
+                                <h4 class="count" data-target="{{ comics_purchased }}">{{ comics_purchased }}</h4>
+                                <p>Comics Purchased</p>
+                            </div>
                         </div>
-                        <p class="mt-2">
-                            {% if profile.level == "Sidekick" %}
-                                Complete more activities to reach <strong>Hero</strong>!
-                            {% elif profile.level == "Hero" %}
-                                Complete more activities to reach <strong>Superhero</strong>!
-                            {% else %}
-                                You're a <strong>Superhero</strong>! Keep ruling the comic universe!
-                            {% endif %}
-                        </p>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ comics_read }}">{{ comics_read }}</h4>
+                                <p>Comics Read</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card" data-bs-toggle="modal" data-bs-target="#favoritedModal">
+                                <h4 class="count" data-target="{{ comics_favorited }}">{{ comics_favorited }}</h4>
+                                <p>Comics Favorited</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Comics Tab -->
-                <div class="tab-pane fade" id="comics" role="tabpanel" aria-labelledby="comics-tab" data-aos="fade-left">
-                    <div class="profile-card">
-                        <h3>My Comics</h3>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ comics_purchased }}">{{ comics_purchased }}</h4>
-                                    <p>Comics Purchased</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ comics_read }}">{{ comics_read }}</h4>
-                                    <p>Comics Read</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ comics_favorited }}">{{ comics_favorited }}</h4>
-                                    <p>Comics Favorited</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="profile-card comic-showcase">
-                        <h3>Favorite Comics</h3>
-                        {% if favorite_comics %}
-                        <div class="row">
-                            {% for item in favorite_comics %}
-                            <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ item.delay }}">
-                                <div class="comic-item">
+                <div class="profile-card comic-showcase">
+                    <h3>Favorite Comics</h3>
+                    {% if favorite_comics %}
+                    <div class="row">
+                        {% for item in favorite_comics %}
+                        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="{{ item.delay }}">
+                            <div class="comic-item">
+                                <a href="{% url 'comic_detail' item.comic.pk %}">
                                     <img src="{{ item.comic.image.url|default:'https://via.placeholder.com/150' }}" alt="{{ item.comic.title }}">
                                     <h4>{{ item.comic.title }}</h4>
                                     <p>{{ item.comic.description|default:"No description available."|truncatechars:100 }}</p>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        <p>No favorite comics selected.</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Watch History Tab -->
-                <div class="tab-pane fade" id="watch" role="tabpanel" aria-labelledby="watch-tab" data-aos="fade-right">
-                    <div class="profile-card">
-                        <h3>Watch History</h3>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ movies_watched }}">{{ movies_watched }}</h4>
-                                    <p>Movies Watched</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ hours_streamed }}">{{ hours_streamed }}</h4>
-                                    <p>Hours Streamed</p>
-                                </div>
+                                </a>
                             </div>
                         </div>
-                        {% if recently_watched %}
-                        <p>Recently watched: <strong>{{ recently_watched.movie.title }}</strong></p>
-                        {% else %}
-                        <p>No movies watched yet.</p>
-                        {% endif %}
+                        {% endfor %}
                     </div>
+                    {% else %}
+                    <p>No favorite comics selected.</p>
+                    {% endif %}
                 </div>
+            </div>
 
-                <!-- Blog Activity Tab -->
-                <div class="tab-pane fade" id="blog" role="tabpanel" aria-labelledby="blog-tab" data-aos="fade-left">
-                    <div class="profile-card">
-                        <h3>Blog Activity</h3>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ blogs_liked }}">{{ blogs_liked }}</h4>
-                                    <p>Blogs Liked</p>
-                                </div>
+            <!-- Watch History Tab -->
+            <div class="tab-pane fade" id="watch" role="tabpanel" aria-labelledby="watch-tab" data-aos="fade-right">
+                <div class="profile-card">
+                    <h3>Watch History</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ movies_watched }}">{{ movies_watched }}</h4>
+                                <p>Movies Watched</p>
                             </div>
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ comments_posted }}">{{ comments_posted }}</h4>
-                                    <p>Comments Posted</p>
-                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ hours_streamed }}">{{ hours_streamed }}</h4>
+                                <p>Hours Streamed</p>
                             </div>
-                            <div class="col-md-4">
-                                <div class="stat-card">
-                                    <h4 class="count" data-target="{{ blogs_written }}">{{ blogs_written }}</h4>
-                                    <p>Blogs Written</p>
-                                </div>
+                        </div>
+                    </div>
+                    {% if recently_watched %}
+                    <p>Recently watched: <strong>{{ recently_watched.movie.title }}</strong></p>
+                    {% else %}
+                    <p>No movies watched yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Blog Activity Tab -->
+            <div class="tab-pane fade" id="blog" role="tabpanel" aria-labelledby="blog-tab" data-aos="fade-left">
+                <div class="profile-card">
+                    <h3>Blog Activity</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ blogs_liked }}">{{ blogs_liked }}</h4>
+                                <p>Blogs Liked</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ comments_posted }}">{{ comments_posted }}</h4>
+                                <p>Comments Posted</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <h4 class="count" data-target="{{ blogs_written }}">{{ blogs_written }}</h4>
+                                <p>Blogs Written</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Scripts -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-        <script>
-            // Initialize AOS
-            AOS.init({
-                duration: 1000,
-                once: true
-            });
+    <!-- Purchased Comics Modal -->
+    <div class="modal fade" id="purchasedModal" tabindex="-1" aria-labelledby="purchasedModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="purchasedModalLabel">Purchased Comics</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if purchased_comics %}
+                    <div class="row">
+                        {% for purchase in purchased_comics %}
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'comic_detail' purchase.comic.pk %}" class="comic-item">
+                                <img src="{{ purchase.comic.image.url|default:'https://via.placeholder.com/150' }}" alt="{{ purchase.comic.title }}">
+                                <h4>{{ purchase.comic.title }}</h4>
+                                <p>{{ purchase.comic.description|default:"No description available."|truncatechars:100 }}</p>
+                                <p>Purchased on: {{ purchase.purchased_at|date:"F d, Y" }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>No comics purchased yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // Theme Switcher
-            const themeSelect = document.getElementById('themeSelect');
-            const profileContainer = document.querySelector('.profile-container');
-            themeSelect.addEventListener('change', function() {
-                const theme = this.value;
-                if (theme === 'ironman') {
-                    profileContainer.style.background = 'rgba(42, 42, 59, 0.9)';
-                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#ffda79');
-                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff4d6d');
-                } else if (theme === 'spiderman') {
-                    profileContainer.style.background = 'rgba(22, 22, 100, 0.9)';
-                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#00b7eb');
-                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff0000');
-                } else if (theme === 'darkknight') {
-                    profileContainer.style.background = 'rgba(10, 10, 10, 0.9)';
-                    document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#cccccc');
-                    document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#555555');
+    <!-- Favorited Comics Modal -->
+    <div class="modal fade" id="favoritedModal" tabindex="-1" aria-labelledby="favoritedModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="favoritedModalLabel">Favorite Comics</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if favorite_comics %}
+                    <div class="row">
+                        {% for favorite in favorite_comics %}
+                        <div class="col-md-6 mb-3">
+                            <a href="{% url 'comic_detail' favorite.comic.pk %}" class="comic-item">
+                                <img src="{{ favorite.comic.image.url|default:'https://via.placeholder.com/150' }}" alt="{{ favorite.comic.title }}">
+                                <h4>{{ favorite.comic.title }}</h4>
+                                <p>{{ favorite.comic.description|default:"No description available."|truncatechars:100 }}</p>
+                                <p>Favorited on: {{ favorite.created_at|date:"F d, Y" }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>No favorite comics selected.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Theme Switcher
+        const themeSelect = document.getElementById('themeSelect');
+        const profileContainer = document.querySelector('.profile-container');
+        themeSelect.addEventListener('change', function() {
+            const theme = this.value;
+            if (theme === 'ironman') {
+                profileContainer.style.background = 'rgba(42, 42, 59, 0.9)';
+                document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#ffda79');
+                document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff4d6d');
+            } else if (theme === 'spiderman') {
+                profileContainer.style.background = 'rgba(22, 22, 100, 0.9)';
+                document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#00b7eb');
+                document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#ff0000');
+            } else if (theme === 'darkknight') {
+                profileContainer.style.background = 'rgba(10, 10, 10, 0.9)';
+                document.querySelectorAll('.edit-btn').forEach(btn => btn.style.background = '#cccccc');
+                document.querySelectorAll('.nav-tabs .nav-link.active').forEach(tab => tab.style.background = '#555555');
+            }
+        });
+
+        // Count-up animation for stats
+        document.querySelectorAll('.count').forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            let count = 0;
+            const increment = target / 50;
+            const updateCount = () => {
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
                 }
-            });
-
-            // Count-up animation for stats
-            document.querySelectorAll('.count').forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                let count = 0;
-                const increment = target / 50;
-                const updateCount = () => {
-                    if (count < target) {
-                        count += increment;
-                        counter.innerText = Math.ceil(count);
-                        setTimeout(updateCount, 20);
-                    } else {
-                        counter.innerText = target;
-                    }
-                };
-                updateCount();
-            });
-        </script>
-    </body>
+            };
+            updateCount();
+        });
+    </script>
+</body>
 </html>
 {% endblock %}

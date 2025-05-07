@@ -96,7 +96,19 @@ class Favorite(models.Model):
         unique_together = ('user', 'comic')
 
     def __str__(self):
-        return f"{self.user.username} favorited {self.comic.title}"    
+        return f"{self.user.username} favorited {self.comic.title}" 
+
+class Purchase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comic_purchases')
+    comic = models.ForeignKey('Comic', on_delete=models.CASCADE, related_name='purchases')
+    purchased_at = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'comic')
+
+    def __str__(self):
+        return f"{self.user.username} purchased {self.comic.title} on {self.purchased_at}"  
     
 class Blog(models.Model):
     title = models.CharField(max_length=255)
