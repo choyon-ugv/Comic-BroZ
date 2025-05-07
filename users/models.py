@@ -109,16 +109,18 @@ class Like(models.Model):
         return f"{self.user.username} liked {self.blog.title}"
     
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comments')
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        username = self.user.username if self.user else "Anonymous"
-        blog_title = self.blog.title if self.blog else "Unknown Blog"
-        return f"Comment by {username} on {blog_title}"
+        return f"Comment by {self.user.username} on {self.blog.title}"
+
+    class Meta:
+        ordering = ['created_at']
+
     
     
 class Profile(models.Model):

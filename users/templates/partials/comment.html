@@ -1,0 +1,55 @@
+{% load static %}
+
+<div class="comment-item {% if comment.parent %}reply{% endif %}" id="comment-{{ comment.id }}">
+  <!-- Comment ID: {{ comment.id }}, Parent ID: {{ comment.parent.id|default:'None' }} -->
+  <div class="comment-header">
+    <div class="comment-user">
+      {% if comment.user and comment.user.profile.profile_image %}
+      <img src="{{ comment.user.profile.profile_image.url }}" class="comment-avatar" alt="{{ comment.user.username }}">
+      {% else %}
+      <img src="{% static 'edgecut/images/default-avatar.png' %}" class="comment-avatar" alt="Anonymous">
+      {% endif %}
+      <span class="comment-name">{{ comment.user.username|default:"Anonymous" }}</span>
+    </div>
+    <span class="comment-date">{{ comment.created_at|date:"F d, Y H:i" }}</span>
+  </div>
+  <div class="comment-content">{{ comment.content }}</div>
+  <div class="comment-actions">
+    {% if user.is_authenticated %}
+    <button class="comment-action-btn reply-comment-btn" data-comment-id="{{ comment.id }}">Reply <span class="loading-spinner"></span></button>
+    {% endif %}
+    {% if user.is_authenticated and comment.user == user %}
+    <button class="comment-action-btn edit-comment-btn" data-comment-id="{{ comment.id }}">Edit <span class="loading-spinner"></span></button>
+    <button class="comment-action-btn delete-comment-btn" data-comment-id="{{ comment.id }}">Delete <span class="loading-spinner"></span></button>
+    {% endif %}
+  </div>
+  {% if user.is_authenticated and comment.user == user %}
+  <form method="POST" action="{% url 'edit_comment' blog.id comment.id %}" class="edit-form" id="edit-form-{{ comment.id }}">
+    {% csrf_token %}
+    <textarea class="comment-textarea" name="content" required>{{ comment.content }}</textarea>
+    <button type="submit" class="comment-submit">Save <span class="loading-spinner"></span></button>
+    <button type="button" class="comment-action-btn cancel-edit-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+  </form>
+  <form method="POST" action="{% url 'delete_comment' blog.id comment.id %}" class="delete-form" id="delete-form-{{ comment.id }}">
+    {% csrf_token %}
+    <button type="submit" class="comment-submit">Confirm Delete <span class="loading-spinner"></span></button>
+    <button type="button" class="comment-action-btn cancel-delete-btn" data-comment-id="{{ comment.id }}">Cancel</button>
+  </form>
+  {% endif %}
+  <div class="reply-form-container" id="reply-form-container-{{ comment.id }}">
+    {% if user.is_authenticated %}
+    <form method="POST" action="{% url 'add_comment' blog.id %}" class="comment-form reply-form" id="reply-form-{{ comment.id }}">
+      {% csrf_token %}
+      <input type="hidden" name="parent_id" value="{{ comment.id }}">
+      <textarea class="comment-textarea" name="content" placeholder="Write your reply..." required></textarea>
+      <button type="submit" class="comment-submit">Post Reply <span class="loading-spinner"></span></button>
+    </form>
+    {% endif %}
+  </div>
+  <div class="replies-container" id="replies-container-{{ comment.id }}">
+    {% for reply in comment.replies.all %}
+    <!-- Reply ID: {{ reply.id }}, Parent ID: {{ reply.parent.id }} -->
+    {% include "partials/comment.html" with comment=reply user=user %}
+    {% endfor %}
+  </div>
+</div>

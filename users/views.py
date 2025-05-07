@@ -302,13 +302,13 @@ def create_blog(request):
 
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
-    comments = Comment.objects.filter(blog=blog).order_by('-created_at')
+    comments = blog.comments.filter(parent__isnull=True).prefetch_related('replies')
     recent_blogs = Blog.objects.exclude(id=blog_id)[:5]
     likes_count = Like.objects.filter(blog=blog).count()
     user_liked = False
     if request.user.is_authenticated:
         user_liked = Like.objects.filter(blog=blog, user=request.user).exists()
-    
+
     context = {
         'blog': blog,
         'comments': comments,
@@ -317,6 +317,8 @@ def blog_detail(request, blog_id):
         'user_liked': user_liked,
     }
     return render(request, 'blog_details.html', context)
+
+
 
 @login_required
 def like_blog(request, blog_id):
@@ -346,33 +348,32 @@ def add_comment(request, blog_id):
     if request.method == 'POST':
         content = request.POST.get('content')
         parent_id = request.POST.get('parent_id')
-        if content:
-            try:
-                cleaned_content = bleach.clean(content, tags=['p', 'b', 'i', 'u', 'strong', 'em'], strip=True)
-                parent = None
-                if parent_id:
-                    parent = get_object_or_404(Comment, id=parent_id, blog=blog)
-                comment = Comment.objects.create(
-                    blog=blog,
-                    user=request.user,
-                    content=cleaned_content,
-                    created_at=timezone.now(),
-                    parent=parent
-                )
-                return JsonResponse({
-                    'success': True,
-                    'comment_id': comment.id,
-                    'content': comment.content,
-                    'user_username': comment.user.username if comment.user else 'Anonymous',
-                    'user_avatar': comment.user.profile.profile_image.url if comment.user and hasattr(comment.user, 'profile') and comment.user.profile.profile_image else '/static/edgecut/images/default-avatar.png',
-                    'created_at': comment.created_at.strftime('%B %d, %Y %H:%M'),
-                    'comments_count': blog.comments.count(),
-                    'parent_id': parent_id if parent_id else None
-                })
-            except Exception as e:
-                return JsonResponse({'success': False, 'message': f'Error creating comment: {str(e)}'}, status=500)
-        return JsonResponse({'success': False, 'message': 'Comment cannot be empty'}, status=400)
-    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
+        if not content:
+            return JsonResponse({'success': False, 'message': 'Content is required'})
+        
+        comment_kwargs = {
+            'blog': blog,
+            'user': request.user,
+            'content': content,
+        }
+        if parent_id:
+            parent = get_object_or_404(Comment, id=parent_id)
+            if parent.replies.count() >= 50:
+                return JsonResponse({'success': False, 'message': 'Maximum 50 replies reached'})
+            comment_kwargs['parent'] = parent
+        
+        comment = Comment.objects.create(**comment_kwargs)
+        
+        return JsonResponse({
+            'success': True,
+            'comment_id': comment.id,
+            'content': comment.content,
+            'user_username': comment.user.username,
+            'user_avatar': comment.user.profile.profile_image.url if hasattr(comment.user, 'profile') and comment.user.profile.profile_image else None,
+            'created_at': comment.created_at.strftime('%B %d, %Y %H:%M'),
+            'comments_count': blog.comments.count(),
+        })
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 @login_required
 def edit_comment(request, blog_id, comment_id):
