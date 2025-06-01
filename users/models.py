@@ -49,6 +49,7 @@ class Movie(models.Model):
     image = models.ImageField(upload_to='movies/images/', blank=True, null=True)
     description = models.TextField()
     watch_link = models.URLField(max_length=255, blank=True, null=True)
+    last_searched = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
