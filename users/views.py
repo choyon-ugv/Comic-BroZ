@@ -14,6 +14,7 @@ import stripe
 import bleach
 from payments.models import Order
 from django.db.models import Q, F
+from .utils import fetch_movie_from_tmdb
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -517,3 +518,11 @@ def character_card(request):
     return render(request, 'characters_card_list.html', context)
 
 
+def search_movie(request):
+    query = request.GET.get('q', '')
+    movie = None
+    if query:
+        movie = fetch_movie_from_tmdb(query)
+    
+    movies = Movie.objects.all()  # List all movies in the database
+    return render(request, 'movies.html', {'movie': movie, 'movies': movies, 'query': query})

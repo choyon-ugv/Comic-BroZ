@@ -127,7 +127,7 @@
                             <a class="nav-link" href="{% url 'character_card' %}">Cards</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name == 'movies' %}active{% endif %}">
-                            <a class="nav-link" href="{% url 'movies' %}">Movies</a>
+                            <a class="nav-link" href="{% url 'search_movie' %}">Movies</a>
                         </li>
                         <li class="nav-item {% if request.resolver_match.url_name in 'comics, comic_detail, comic_purchase, comic_favorite, comic_unfavorite, comic_read, success_page' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'comics' %}">Comics</a>

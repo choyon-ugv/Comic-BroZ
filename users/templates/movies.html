@@ -1,7 +1,8 @@
+
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Bro'z Movie Blog{% endblock %}
+{% block title %}Search Movies - Bro'z Movie Blog{% endblock %}
 
 {% block extra_css %}
 <!-- Google Fonts -->
@@ -25,7 +26,7 @@
     }
 
     .hero {
-        height: 60vh;
+        height: 50vh;
         background: linear-gradient(to right, rgba(20, 20, 20, 0.9), rgba(20, 20, 20, 0.5)),
                     url('{% static "edgecut/images/hhhhhhhhhhh.jpg" %}') no-repeat center center/cover;
         display: flex;
@@ -34,19 +35,48 @@
         text-align: center;
         padding: 2rem;
         position: relative;
-        color: var(--text-color);
     }
 
     .hero h1 {
-        font-size: 4rem;
+        font-size: 3rem;
         font-weight: 700;
         margin-bottom: 1rem;
     }
 
-    .hero p {
-        font-size: 1.2rem;
-        font-weight: 400;
+    .hero form {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .hero input {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+
+    .hero input::placeholder {
         color: var(--text-muted);
+    }
+
+    .hero button {
+        padding: 0.75rem 1.5rem;
+        background-color: var(--accent-color);
+        color: var(--text-color);
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .hero button:hover {
+        background-color: #ff1c1c;
     }
 
     .movie-container {
@@ -94,6 +124,7 @@
     .movie-details p {
         font-size: 0.9rem;
         color: var(--text-muted);
+        margin-bottom: 0.5rem;
     }
 
     .watch-btn {
@@ -113,13 +144,59 @@
         background-color: #ff1c1c;
     }
 
+    .error-message {
+        color: #ff4444;
+        font-size: 1.1rem;
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .featured-movie {
+        background: var(--card-bg);
+        border-radius: 10px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .featured-movie img {
+        width: 200px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .featured-details {
+        flex: 1;
+    }
+
+    .featured-details h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
     @media (max-width: 768px) {
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
 
-        .hero p {
-            font-size: 1rem;
+        .hero form {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .featured-movie {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .featured-movie img {
+            width: 150px;
+            height: 225px;
         }
 
         .movie-card img {
@@ -130,26 +207,62 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
+<!-- Hero Section with Search -->
 <section class="hero" data-aos="fade-up">
     <div>
-        <h1>Bro'z Movie Blog</h1>
-        <p>Explore epic movies, classics, and hidden gems curated just for you.</p>
+        <h1>Search Movies</h1>
+        <form method="GET">
+            <input type="text" name="q" value="{{ query }}" placeholder="Enter movie title">
+            <button type="submit">Search</button>
+        </form>
     </div>
 </section>
 
-<!-- Movie Cards -->
-<div class="movie-container">
-    <div class="movie-grid">
-        {% for movie in movies %}
-        <div class="movie-card" data-aos="fade-up">
-            <img src="{% if movie.image %}{{ movie.image.url }}{% else %}https://via.placeholder.com/300x200.png?text=No+Image{% endif %}" alt="{{ movie.title }}">
-            <div class="movie-details">
-                <h5>{{ movie.title }}</h5>
-                <p><strong>Release:</strong> {{ movie.release_date }}</p>
-                <a href="{{ movie.watch_link }}" class="watch-btn" target="_blank">Watch Now</a>
+<!-- Featured Movie (Search Result) -->
+{% if error %}
+    <p class="error-message" data-aos="fade-up">{{ error }}</p>
+{% endif %}
+
+{% if movie %}
+    <div class="movie-container" data-aos="fade-up">
+        <div class="featured-movie">
+            {% if movie.image %}
+                <img src="{{ movie.image.url }}" alt="{{ movie.title }}">
+            {% else %}
+                <img src="https://via.placeholder.com/200x300.png?text=No+Image" alt="{{ movie.title }}">
+            {% endif %}
+            <div class="featured-details">
+                <h2>{{ movie.title }}</h2>
+                <p><strong>Release:</strong> {{ movie.release_date|date:"Y-m-d" }}</p>
+                <p><strong>Runtime:</strong> {{ movie.runtime }} minutes</p>
+                <p><strong>Description:</strong> {{ movie.description }}</p>
+                {% if movie.watch_link %}
+                    <a href="{{ movie.watch_link }}" class="watch-btn" target="_blank">Watch Now</a>
+                {% else %}
+                    <p class="text-muted">No streaming link available.</p>
+                {% endif %}
             </div>
         </div>
+    </div>
+{% endif %}
+
+<!-- All Movies -->
+<div class="movie-container">
+    <h2 data-aos="fade-up">All Movies</h2>
+    <div class="movie-grid">
+        {% for m in movies %}
+            <div class="movie-card" data-aos="fade-up">
+                <img src="{% if m.image %}{{ m.image.url }}{% else %}https://via.placeholder.com/300x200.png?text=No+Image{% endif %}" alt="{{ m.title }}">
+                <div class="movie-details">
+                    <h5>{{ m.title }}</h5>
+                    <p><strong>Release:</strong> {{ m.release_date|date:"Y-m-d" }}</p>
+                    {% if m.watch_link %}
+                        <a href="{{ m.watch_link }}" class="watch-btn" target="_blank">Watch Now</a>
+                    {% else %}
+                        <p class="text-muted">No streaming link available.</p>
+                    {% endif %}
+                </div>
+            </div>
         {% endfor %}
     </div>
 </div>

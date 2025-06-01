@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, login, logout, home, movies, about, blog, delete_blog, edit_blog, contact, like_blog, add_comment, blog_detail, edit_comment, delete_comment, change_password, profile_view, profile_update,  create_blog, character_card, comic, comic_purchase, comic_favorite, comic_unfavorite, comic_read, payment_success, comic_detail, success_page
+from .views import register, login, logout, home, movies, about, blog, delete_blog, edit_blog, contact, like_blog, add_comment, blog_detail, edit_comment, delete_comment, change_password, profile_view, profile_update,  create_blog, character_card, comic, comic_purchase, comic_favorite, comic_unfavorite, comic_read, payment_success, comic_detail, success_page, search_movie
 
 urlpatterns = [
     path('register/', register, name='register'),
@@ -7,7 +7,7 @@ urlpatterns = [
     path('password_change/', change_password, name='change_password'),
     path('logout/', logout, name='logout'),
     path('', home, name='home'),
-    path('movies/', movies, name='movies'),
+    # path('movies/', movies, name='movies'),
     # path('movies/<int:pk>/', movie_detail, name='movie_detail'),
     path('about/', about, name='about'),
     path('comics/', comic, name='comics'),
@@ -32,4 +32,5 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('profile/update/', profile_update, name='profile-update'),
     path('character_card', character_card, name='character_card'),
+    path('search_movie/', search_movie, name='search_movie'),
 ]
