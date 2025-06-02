@@ -520,20 +520,20 @@ def character_card(request):
 
 def search_movie(request):
     query = request.GET.get('q', '').strip()
-    # print("Query received:", query)
+    print("Query received:", query)
     movie = None
-    # error = None
+    error = None
     if query:
         print("Fetching movie for:", query)
-        # movie = fetch_movie_from_tmdb(query)
+        movie = fetch_movie_from_tmdb(query)
         print("Movie fetched:", movie)
         if not movie:
             error = f"No movie found for '{query}'. Try 'Iron Man' instead of 'Ironman'."
-            # print("Error:", error)
+            print("Error:", error)
     else:
         error = "Please enter a movie title to search."
     
     # Order movies by last_searched, newest first
     movies = Movie.objects.all().order_by('-last_searched')
-    # print("All movies:", [(m.title, m.last_searched) for m in movies])
+    print("All movies:", [(m.title, m.last_searched) for m in movies])
     return render(request, 'movies.html', {'movie': movie, 'movies': movies, 'query': query, 'error': error})

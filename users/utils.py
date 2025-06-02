@@ -6,7 +6,7 @@ from .models import Movie
 from datetime import datetime
 
 def fetch_movie_from_tmdb(title):
-    # print("Searching TMDb for:", title)
+    print("Searching TMDb for:", title)
     base_url = "https://api.themoviedb.org/3"
     search_url = f"{base_url}/search/movie"
     details_url = f"{base_url}/movie/{{movie_id}}"
@@ -17,26 +17,26 @@ def fetch_movie_from_tmdb(title):
         response = requests.get(search_url, params=params)
         response.raise_for_status()
         data = response.json()
-        # print("Search results:", data.get('results', []))
+        print("Search results:", data.get('results', []))
         
         if not data.get('results'):
-            # print("No results found for:", title)
+            print("No results found for:", title)
             return None
         
         movie_data = data['results'][0]
         movie_id = movie_data['id']
-        # print("Movie ID:", movie_id)
+        print("Movie ID:", movie_id)
         
         details_response = requests.get(details_url.format(movie_id=movie_id), params={'api_key': settings.TMDB_API_KEY, 'language': 'en-US'})
         details_response.raise_for_status()
         details = details_response.json()
-        # print("Movie details:", details)
+        print("Movie details:", details)
         
         watch_link = details.get('homepage', '')
         providers_response = requests.get(providers_url.format(movie_id=movie_id), params={'api_key': settings.TMDB_API_KEY})
         if providers_response.status_code == 200:
             providers = providers_response.json()
-            # print("Providers:", providers)
+            print("Providers:", providers)
             if 'results' in providers and 'US' in providers['results']:
                 provider_data = providers['results']['US'].get('flatrate', [])
                 if provider_data:
